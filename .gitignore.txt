@@ -1,0 +1,26 @@
+#Compilados
+*.class
+*.jar
+*.war
+*.ear
+target/
+build/
+out/
+
+#IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Datos locales 
+*.json
+data/
+
+#Logs
+*.log
+
+#Sistema
+Thumbs.db

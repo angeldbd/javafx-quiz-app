@@ -1,0 +1,93 @@
+{
+    "name": "angel",
+    "questions": [
+        {
+      "position": 13,
+      "topic": "OOP",
+      "q": "What are the main principles of Object Oriented Programming?",
+      "a": "The main OOP principles are Abstraction, Encapsulation, Inheritance, and Polymorphism.",
+      "x": [
+        "Loops, Conditions, Variables",
+        "Compilation, Execution, Linking",
+        "HTML, CSS, JavaScript"
+      ]
+    },
+    {
+      "position": 14,
+      "topic": "OOP",
+      "q": "What is the difference between Object Oriented Programming language and Object Based Programming language?",
+      "a": "OOP languages support all OOP principles (Abstraction, Encapsulation, Inheritance, Polymorphism); Object-Based languages support objects and encapsulation but not Inheritance and Polymorphism (e.g., JavaScript, VBScript).",
+      "x": [
+        "OOP languages have no objects",
+        "Object-Based languages support Polymorphism and Inheritance",
+        "OOP languages cannot use constructors"
+      ]
+    },
+    {
+      "position": 15,
+      "topic": "OOP",
+      "q": "In Java, what is the default value of an object reference defined as an instance variable?",
+      "a": "All instance variable object references are null by default.",
+      "x": [
+        "0",
+        "Empty string",
+        "Undefined"
+      ]
+    },
+    {
+      "position": 16,
+      "topic": "OOP",
+      "q": "Why do we need a constructor in Java?",
+      "a": "Constructors create objects and set their initial state; without them, objects cannot be created.",
+      "x": [
+        "To destroy objects",
+        "To execute main method",
+        "To define a class name"
+      ]
+    },
+    {
+      "position": 17,
+      "topic": "OOP",
+      "q": "Why do we need a default constructor in Java classes?",
+      "a": "A default constructor (no-argument) is automatically provided if no other constructor exists; it ensures objects can be created when no custom constructor is defined.",
+      "x": [
+        "It is optional and never used",
+        "It deletes all objects",
+        "It replaces the main method"
+      ]
+    },
+        {
+      "position": 18,
+      "topic": "OOP",
+      "q": "What is the value returned by a constructor in Java?",
+      "a": "A constructor returns the object it creates.",
+      "x": [
+        "It returns void",
+        "It returns a number",
+        "It returns a string"
+      ]
+    },
+    {
+      "position": 19,
+      "topic": "OOP",
+      "q": "Can we inherit a constructor in Java?",
+      "a": "No, Java does not allow constructors to be inherited.",
+      "x": [
+        "Yes, always",
+        "Only in abstract classes",
+        "Only in interfaces"
+      ]
+    },
+    {
+      "position": 20,
+      "topic": "OOP",
+      "q": "Why constructors cannot be final, static, or abstract in Java?",
+      "a": "Constructors cannot be final, static, or abstract because they must always have a body, cannot be overridden, and are used to initialize objects.",
+      "x": [
+        "Constructors can be static or final",
+        "Constructors do not need a body",
+        "Constructors belong to the class only"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+    "name": "angel",
+    "questions": [
+    {
+    "position": 78,
+    "topic": "Package",
+    "q": "What is the purpose of package in Java?",
+    "a": "To encapsulate classes, interfaces and sub-packages in hierarchical structure. Packages provide access protection, help organize related code, and prevent naming collisions.",
+    "x": [
+      "To automatically generate documentation and provide runtime type checking for all classes.",
+      "To enable multiple inheritance by grouping related classes that share common functionality.",
+      "To create separate JVM instances for each package to improve performance and security."
+    ]
+  },
+  {
+    "position": 79,
+    "topic": "Package",
+    "q": "What is java.lang package?",
+    "a": "Contains fundamental classes for Java programming language. Most important is Object class. Also contains wrapper classes (Integer, Boolean, Character) and Math class for mathematical operations.",
+    "x": [
+      "Contains language-specific classes for internationalization and localization support only.",
+      "Provides low-level system access classes for file I/O and network communication operations.",
+      "Contains deprecated classes from older Java versions maintained for backward compatibility."
+    ]
+  },
+  {
+    "position": 80,
+    "topic": "Package",
+    "q": "Which is the most important class in Java?",
+    "a": "Object class is the most important class as it's the root of all classes in Java and provides fundamental methods.",
+    "x": [
+      "String class because all Java programs require string manipulation and text processing capabilities.",
+      "System class because it provides essential system-level operations and program termination methods.",
+      "Class class because it enables reflection and runtime type information for all Java objects."
+    ]
+  },
+  {
+    "position": 81,
+    "topic": "Package",
+    "q": "Is it mandatory to import java.lang package every time?",
+    "a": "No. The JVM loads java.lang package internally by default.",
+    "x": [
+      "Yes, you must explicitly import java.lang in every class to access Object and String classes.",
+      "No, but only if you use the -auto-import compiler flag during compilation.",
+      "Yes, except for classes that extend Object directly which get automatic java.lang access."
+    ]
+  },
+  {
+    "position": 82,
+    "topic": "Package",
+    "q": "Can you import same package or class twice in your class?",
+    "a": "Yes, but compiler includes it only once. JVM loads the class only once. Multiple imports of same package don't cause errors, but same class names may cause collision.",
+    "x": [
+      "No, duplicate imports cause compilation errors and must be removed before successful compilation.",
+      "Yes, but each import creates a separate class instance increasing memory usage significantly.",
+      "No, the second import automatically overrides the first import causing unpredictable behavior."
+    ]
+  },
+  {
+    "position": 83,
+    "topic": "Package",
+    "q": "What is a static import in Java?",
+    "a": "Allows importing static members from a class without using class qualifier, similar to how normal import allows importing classes without package qualifier.",
+    "x": [
+      "A special import that loads classes at compile time instead of runtime for better performance.",
+      "An import statement that automatically makes all class methods static for easier access.",
+      "A way to import entire packages as static references to prevent dynamic class loading."
+    ]
+  },
+  {
+    "position": 84,
+    "topic": "Package",
+    "q": "What is the difference between import static com.test.Fooclass and import com.test.Fooclass?",
+    "a": "First is static import allowing access to static members of Fooclass without class qualifier. Second is normal import allowing access to Fooclass without package qualifier.",
+    "x": [
+      "First import creates a static reference while second import creates a dynamic instance of the class.",
+      "First import loads the class at compile time while second import uses lazy loading at runtime.",
+      "First import prevents instantiation of Fooclass while second import allows normal object creation."
+    ]
+  }
+  ]
+}

@@ -1,0 +1,34 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 06-09-2025, 2:26:41 p. m.
+    Author     : angel
+*/
+
+.tree-table-row-cell {
+    -fx-background-color: white;
+}
+
+.tree-table-row-cell:filled:selected {
+    -fx-background-color: #4285F4; /* Azul selección */
+    -fx-text-fill: white;
+}
+
+.tree-table-cell {
+    -fx-alignment: CENTER;
+}
+
+/* Verde para correctas */
+.correct-cell {
+    -fx-text-fill: green;
+    -fx-font-weight: bold;
+}
+
+/* Rojo para incorrectas */
+.wrong-cell {
+    -fx-text-fill: red;
+    -fx-font-weight: bold;
+}
+.keyword { -fx-fill: purple; -fx-font-weight: bold; }

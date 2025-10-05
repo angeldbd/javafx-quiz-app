@@ -1,0 +1,258 @@
+{
+    "name": "angel",
+    "questions": [
+ {
+    "position": 55,
+    "topic": "Abstraction",
+    "q": "What is Abstraction in Object Oriented programming?",
+    "a": "The process of hiding implementation details while showing only essential features to the outside world. It identifies commonalities and focuses on the interface shared with external components.",
+    "x": [
+      "The process of creating multiple inheritance hierarchies to reduce code duplication in classes.",
+      "The ability to create generic methods that work with different data types using wildcards.",
+      "The technique of converting concrete classes into final classes to prevent modification."
+    ]
+  },
+  {
+    "position": 56,
+    "topic": "Abstraction",
+    "q": "How is Abstraction different from Encapsulation?",
+    "a": "Abstraction happens at class design level and hides implementation details. Encapsulation (Information Hiding) involves making member variables private and providing getters/setters.",
+    "x": [
+      "Abstraction uses interfaces while Encapsulation uses abstract classes for implementation hiding.",
+      "Abstraction is achieved through inheritance while Encapsulation requires composition patterns.",
+      "Abstraction works at runtime while Encapsulation is resolved during compile time optimization."
+    ]
+  },
+  {
+    "position": 57,
+    "topic": "Abstraction",
+    "q": "What is an abstract class in Java?",
+    "a": "A class with one or more abstract methods that are declared but not implemented. It must be extended by child classes that implement the abstract methods. Cannot be instantiated.",
+    "x": [
+      "A class that contains only static methods and cannot have instance variables or constructors.",
+      "A class that implements all interface methods but cannot be inherited by other classes.",
+      "A class marked with @Abstract annotation that automatically generates method implementations."
+    ]
+  },
+  {
+    "position": 58,
+    "topic": "Abstraction",
+    "q": "Is it allowed to mark a method abstract method without marking the class abstract?",
+    "a": "No. Java specification requires that if a class has at least one abstract method, the class itself must be marked abstract.",
+    "x": [
+      "Yes, but only if the method is also marked as static or final to prevent inheritance issues.",
+      "Yes, concrete classes can have abstract methods as long as they provide default implementations.",
+      "No, but you can achieve similar behavior using private abstract methods in concrete classes."
+    ]
+  },
+  {
+    "position": 59,
+    "topic": "Abstraction",
+    "q": "Is it allowed to mark a method abstract as well as final?",
+    "a": "No. It's contradictory - abstract methods must be overridden by child classes, but final methods cannot be overridden.",
+    "x": [
+      "Yes, but only in abstract classes where the final abstract method serves as a template.",
+      "Yes, this combination creates methods that must be implemented but cannot be modified later.",
+      "No, but you can use 'abstract final' for variables to achieve similar immutable behavior."
+    ]
+  },
+  {
+    "position": 60,
+    "topic": "Abstraction",
+    "q": "Can we instantiate an abstract class in Java?",
+    "a": "No. We cannot create an instance of an abstract class in Java.",
+    "x": [
+      "Yes, but only through reflection using the Class.newInstance() method.",
+      "Yes, if all abstract methods have default implementations provided in the class.",
+      "No, but we can instantiate them indirectly using anonymous inner classes."
+    ]
+  },
+  {
+    "position": 61,
+    "topic": "Abstraction",
+    "q": "What is an interface in Java?",
+    "a": "An abstract type blueprint containing method signatures and constants that a class must implement. It's like a protocol defining what methods a class should have.",
+    "x": [
+      "A concrete class that provides default implementations for methods that other classes can inherit.",
+      "A special type of abstract class that can only contain static methods and final variables.",
+      "A runtime contract that allows dynamic method binding between unrelated classes."
+    ]
+  },
+  {
+    "position": 62,
+    "topic": "Abstraction",
+    "q": "Is it allowed to mark an interface method as static?",
+    "a": "Yes, from Java 8 onwards, interfaces can have static and default methods. Prior to Java 8, it was not allowed.",
+    "x": [
+      "No, interface methods must always be abstract and cannot have any implementation.",
+      "Yes, but static interface methods must be declared as final to prevent overriding.",
+      "No, static methods violate the interface contract and are only allowed in abstract classes."
+    ]
+  },
+  {
+    "position": 63,
+    "topic": "Abstraction",
+    "q": "Why an Interface cannot be marked as final in Java?",
+    "a": "Interface methods must be implemented by other classes. If an interface were final, it couldn't be implemented, defeating the purpose of interfaces.",
+    "x": [
+      "Final interfaces would prevent multiple inheritance which is a key feature of Java interfaces.",
+      "Interface methods are automatically static, and final static combinations are not allowed in Java.",
+      "Final interfaces would be stored in permanent memory and could not be garbage collected properly."
+    ]
+  },
+  {
+    "position": 64,
+    "topic": "Abstraction",
+    "q": "What is a marker interface?",
+    "a": "An interface with no data members or methods. Examples include Serializable, Cloneable, and Remote interfaces.",
+    "x": [
+      "An interface that marks methods for automatic code generation during compilation.",
+      "A special interface that can only be implemented by abstract classes, not concrete classes.",
+      "An interface that provides marker annotations for methods that need runtime optimization."
+    ]
+  },
+  {
+    "position": 65,
+    "topic": "Abstraction",
+    "q": "What can we use instead of Marker interface?",
+    "a": "Annotations can be used instead of Marker interfaces.",
+    "x": [
+      "Abstract classes with empty method implementations.",
+      "Static final variables in regular classes.",
+      "Enum types with single constant values."
+    ]
+  },
+  {
+    "position": 66,
+    "topic": "Abstraction",
+    "q": "How Annotations are better than Marker Interfaces?",
+    "a": "Annotations convey metadata without creating separate types and are more powerful, allowing programmers to pass sophisticated information to consuming classes.",
+    "x": [
+      "Annotations provide runtime type checking while marker interfaces only work at compile time.",
+      "Annotations can be inherited through class hierarchies while marker interfaces cannot be inherited.",
+      "Annotations automatically generate implementation code while marker interfaces require manual coding."
+    ]
+  },
+  {
+    "position": 67,
+    "topic": "Abstraction",
+    "q": "What is the difference between abstract class and interface in Java?",
+    "a": "Abstract class: can have implemented methods, instance variables, constructors, single inheritance. Interface: only abstract methods (+ static/default since Java 8), only constants, no constructors, multiple inheritance.",
+    "x": [
+      "Abstract class supports multiple inheritance while interface only allows single inheritance from other interfaces.",
+      "Abstract class methods are automatically public while interface methods can have private and protected modifiers.",
+      "Abstract class cannot have constructors while interface can have special initialization constructors."
+    ]
+  },
+  {
+    "position": 68,
+    "topic": "Abstraction",
+    "q": "Does Java allow us to use private and protected modifiers for variables in interfaces?",
+    "a": "No. All variables in interfaces are implicitly public.",
+    "x": [
+      "Yes, since Java 8 interfaces can have private variables for internal implementation details.",
+      "Yes, but only protected variables are allowed, private variables are still forbidden.",
+      "No, but you can achieve similar behavior using static nested classes within interfaces."
+    ]
+  },
+  {
+    "position": 69,
+    "topic": "Abstraction",
+    "q": "How can we cast to an object reference to an interface reference?",
+    "a": "An object that implements an interface can be cast to that interface reference, since it already provides implementations for the interface methods according to inheritance rules.",
+    "x": [
+      "Use the instanceof operator followed by explicit casting with the interface name in parentheses.",
+      "Objects must first be wrapped in a proxy class before they can be cast to interface references.",
+      "Only objects created with the 'new' keyword can be cast to interfaces, not objects from factory methods."
+    ]
+  },
+{
+    "position": 70,
+    "topic": "Final",
+    "q": "How can you change the value of a final variable in Java?",
+    "a": "You cannot. Java does not allow changing the value of a final variable once it is set.",
+    "x": [
+      "Use reflection to access the private fields and modify the final variable directly.",
+      "Declare the variable as 'volatile final' to allow runtime modifications in multithreaded environments.",
+      "Override the variable in a subclass using the @Override annotation to change its value."
+    ]
+  },
+  {
+    "position": 71,
+    "topic": "Final",
+    "q": "Can a class be marked final in Java?",
+    "a": "Yes, a class can be marked final. Once marked final, it cannot be extended by other classes.",
+    "x": [
+      "No, only methods and variables can be marked final, classes use the 'sealed' keyword instead.",
+      "Yes, but final classes can still be extended using composition patterns and delegation.",
+      "No, marking a class final would prevent it from implementing interfaces."
+    ]
+  },
+  {
+    "position": 72,
+    "topic": "Final",
+    "q": "How can we create a final method in Java?",
+    "a": "Add the 'final' modifier to the method. A final method cannot be overridden by child classes.",
+    "x": [
+      "Use the @FinalMethod annotation before the method declaration to prevent overriding.",
+      "Declare the method as 'static final' to ensure it cannot be modified in subclasses.",
+      "Create the method inside a final block within the class to make it immutable."
+    ]
+  },
+  {
+    "position": 73,
+    "topic": "Final",
+    "q": "How can we prohibit inheritance in Java?",
+    "a": "Mark the class as final. A final class cannot be extended, which prohibits inheritance.",
+    "x": [
+      "Make all class constructors private and provide static factory methods instead.",
+      "Use the @NoInheritance annotation at the class level to prevent subclassing.",
+      "Implement the NonInheritable interface which prevents the class from being extended."
+    ]
+  },
+  {
+    "position": 74,
+    "topic": "Final",
+    "q": "Why Integer class in final in Java?",
+    "a": "Integer is a wrapper for int. If not final, other classes could extend it and modify Integer operations behavior. Being final prevents this modification.",
+    "x": [
+      "Integer class is final to improve performance by enabling compile-time optimizations for arithmetic operations.",
+      "Integer class contains native methods that require final status for proper JVM integration.",
+      "Integer class is final to prevent memory leaks that could occur from subclassing wrapper types."
+    ]
+  },
+  {
+    "position": 75,
+    "topic": "Final",
+    "q": "What is a blank final variable in Java?",
+    "a": "A final variable declared without an initial value. It must be initialized before use.",
+    "x": [
+      "A final variable that is automatically initialized to null or zero by the Java compiler.",
+      "A final variable that can be reassigned once during the object's lifetime but not afterwards.",
+      "A final variable that uses lazy initialization and gets its value only when first accessed."
+    ]
+  },
+  {
+    "position": 76,
+    "topic": "Final",
+    "q": "How can we initialize a blank final variable?",
+    "a": "Blank final instance variables can be initialized in constructors. Blank final static variables can be initialized in static blocks.",
+    "x": [
+      "Blank final variables must be initialized using setter methods marked with @FinalInit annotation.",
+      "Blank final variables can only be initialized in the main method before any object creation.",
+      "Blank final variables are initialized automatically by the JVM based on their declared type."
+    ]
+  },
+  {
+    "position": 77,
+    "topic": "Final",
+    "q": "Is it allowed to declare main method as final?",
+    "a": "Yes, we can mark the main method as final.",
+    "x": [
+      "No, the main method must be overridable for proper application inheritance patterns.",
+      "Yes, but only if the class containing main is also declared as final.",
+      "No, final main methods would prevent the JVM from properly loading the application."
+    ]
+  }    
+  ]
+}

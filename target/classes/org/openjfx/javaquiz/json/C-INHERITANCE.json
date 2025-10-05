@@ -1,0 +1,128 @@
+{
+    "name": "angel",
+    "questions": [
+    
+        {
+      "position": 21,
+      "topic": "Inheritance",
+      "q": "What is the purpose of the ‘this’ keyword in Java?",
+      "a": "‘this’ refers to the current object instance; it differentiates instance variables from local variables, can call constructors, and refer to the current class instance.",
+      "x": [
+        "It refers to the superclass",
+        "It refers to static methods only",
+        "It creates a new object automatically"
+      ]
+    },
+    {
+      "position": 22,
+      "topic": "Inheritance",
+      "q": "Explain the concept of Inheritance?",
+      "a": "Inheritance allows a class to inherit common behavior and characteristics from a base class (IS-A relationship), promoting code reuse, method overriding, and polymorphism.",
+      "x": [
+        "Inheritance copies all code into child class",
+        "Inheritance deletes base class methods",
+        "Inheritance is only for interfaces"
+      ]
+    },
+    {
+      "position": 23,
+      "topic": "Inheritance",
+      "q": "Which class in Java is superclass of every other class?",
+      "a": "Object class is the superclass of all classes in Java.",
+      "x": [
+        "String",
+        "Class",
+        "Main"
+      ]
+    },
+    {
+      "position": 24,
+      "topic": "Inheritance",
+      "q": "Why does Java not support multiple inheritance?",
+      "a": "Multiple inheritance can cause ambiguity if parent classes have methods with the same signature; Java avoids this in implementation but allows multiple interfaces.",
+      "x": [
+        "Java cannot create more than one class",
+        "Java does not support objects",
+        "Multiple inheritance is slower in Java"
+      ]
+    },
+    {
+      "position": 25,
+      "topic": "Inheritance",
+      "q": "In OOP, what is meant by composition?",
+      "a": "Composition (has-a relationship) is when a class contains an instance of another class, e.g., a Car has a SteeringWheel.",
+      "x": [
+        "Composition means inheriting all methods",
+        "Composition deletes the contained class",
+        "Composition is the same as polymorphism"
+      ]
+    },
+    {
+  "position": 26,
+  "topic": "Inheritance",
+  "q": "How are aggregation and composition different concepts?",
+  "a": "Composition is a strong 'has-a' relationship where parts are destroyed with the whole (e.g., Car and SteeringWheel); Aggregation is weaker, parts can exist independently (e.g., Library and Students).",
+  "x": [
+    "Aggregation destroys all objects when parent is destroyed",
+    "Composition allows parts to exist independently",
+    "Aggregation is stronger than Composition"
+  ]
+},
+{
+  "position": 27,
+  "topic": "Inheritance",
+  "q": "Why are there no pointers in Java?",
+  "a": "Java uses object references instead of pointers, avoiding direct memory access, which simplifies memory management and garbage collection.",
+  "x": [
+    "Java does not support objects",
+    "Pointers are too slow",
+    "Java cannot access memory at all"
+  ]
+},
+{
+  "position": 28,
+  "topic": "Inheritance",
+  "q": "If there are no pointers in Java, then why do we get NullPointerException?",
+  "a": "Object references act like pointers; if a reference points to null and we access a method or field, JVM throws NullPointerException.",
+  "x": [
+    "NullPointerException occurs due to pointers",
+    "Java never throws NullPointerException",
+    "NullPointerException is caused by static methods"
+  ]
+},
+{
+  "position": 29,
+  "topic": "Inheritance",
+  "q": "What is the purpose of the ‘super’ keyword in Java?",
+  "a": "‘super’ refers to the immediate parent class; it can call parent methods or constructors from a child class.",
+  "x": [
+    "‘super’ creates a new object",
+    "‘super’ deletes the parent class",
+    "‘super’ refers to static methods only"
+  ]
+},
+{
+  "position": 30,
+  "topic": "Inheritance",
+  "q": "Is it possible to use this() and super() both in the same constructor?",
+  "a": "No, Java requires that either this() or super() must be the first statement; both cannot be used together.",
+  "x": [
+    "Yes, anywhere in the constructor",
+    "Yes, only after other statements",
+    "No, but only for abstract classes"
+  ]
+},
+{
+  "position": 31,
+  "topic": "Inheritance",
+  "q": "What is the meaning of object cloning in Java?",
+  "a": "Object.clone() creates an exact copy of an object with the same class and field values, similar to a copy constructor.",
+  "x": [
+    "Cloning deletes the original object",
+    "Cloning changes the class of object",
+    "Cloning copies only primitive fields, not objects"
+  ]
+}
+
+  ]
+}
