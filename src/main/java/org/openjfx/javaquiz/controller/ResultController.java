@@ -1,5 +1,7 @@
-package org.openjfx.javaquiz;
+package org.openjfx.javaquiz.controller;
 
+import org.openjfx.javaquiz.model.TopicStats;
+import org.openjfx.javaquiz.model.QuizData;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,7 @@ import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.stage.Stage;
 import javafx.scene.control.TreeTableView;
+import org.openjfx.javaquiz.JavaQuiz;
 
 /**
  * Esta clase solo se encarga de mostrar el resultado final

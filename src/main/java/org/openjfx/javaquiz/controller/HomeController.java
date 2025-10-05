@@ -1,5 +1,5 @@
 
-package org.openjfx.javaquiz;
+package org.openjfx.javaquiz.controller;
 
 
 import javafx.event.ActionEvent;
@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.openjfx.javaquiz.JavaQuiz;
 
 /**
  * Este metodo inicia la app

@@ -1,7 +1,7 @@
-package org.openjfx.javaquiz;
+package org.openjfx.javaquiz.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.openjfx.javaquiz.QuizData;
+import org.openjfx.javaquiz.model.QuizData;
 import java.io.InputStream;
 
 /**
@@ -12,10 +12,18 @@ public class QuizLoader {
 
     public static QuizData loadQuizData(String fileName) {
         
-        try {
+                ObjectMapper mapper = new ObjectMapper();
+            
+                // Ruta ABSOLUTA desde la raíz de resources
+                String jsonPath = "/org/openjfx/javaquiz/json/" + fileName + ".json"; 
+                
+        try (InputStream is = QuizLoader.class.getResourceAsStream(jsonPath);){
 
-            ObjectMapper mapper = new ObjectMapper();
-            InputStream is = QuizLoader.class.getResourceAsStream("json/"+fileName+".json");
+            
+                if ( is == null){
+                throw new IllegalArgumentException("No se encontró el archivo JSON: " + fileName);
+                }
+            
             QuizData data = mapper.readValue(is, QuizData.class);
                 //data.getQuestions().get(0).setTopic(fileName);
             /*System.out.println("Loaded by: " + data.getName());
@@ -28,6 +36,7 @@ public class QuizLoader {
             
             return data;
         } catch (Exception e) {
+            System.err.println("Error cargando quiz: " + fileName);
             e.printStackTrace();
             return null;
         }

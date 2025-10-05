@@ -1,4 +1,4 @@
-package org.openjfx.javaquiz;
+package org.openjfx.javaquiz.model;
 
 /**
  * clase que guarda los valores de correcto e incorrecto 

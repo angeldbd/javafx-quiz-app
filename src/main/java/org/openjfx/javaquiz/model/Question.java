@@ -1,4 +1,4 @@
-package org.openjfx.javaquiz;
+package org.openjfx.javaquiz.model;
 
 import java.util.List;
 /**

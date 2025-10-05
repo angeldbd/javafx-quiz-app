@@ -1,6 +1,10 @@
-package org.openjfx.javaquiz;
+package org.openjfx.javaquiz.controller;
 
 
+import org.openjfx.javaquiz.controller.ResultController;
+import org.openjfx.javaquiz.model.Question;
+import org.openjfx.javaquiz.model.QuizData;
+import org.openjfx.javaquiz.util.CodeDisplay;
 import java.io.IOException;
 import javafx.util.Duration;
 import java.util.ArrayList;
@@ -36,6 +40,7 @@ import javafx.stage.StageStyle;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
+import org.openjfx.javaquiz.JavaQuiz;
 
 
 /**

@@ -1,4 +1,4 @@
-package org.openjfx.javaquiz;
+package org.openjfx.javaquiz.util;
 
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.model.StyleSpans;

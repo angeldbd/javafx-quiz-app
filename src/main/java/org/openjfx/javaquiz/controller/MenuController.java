@@ -1,6 +1,9 @@
 
-package org.openjfx.javaquiz;
+package org.openjfx.javaquiz.controller;
 
+import org.openjfx.javaquiz.controller.QuizController;
+import org.openjfx.javaquiz.repository.QuizLoader;
+import org.openjfx.javaquiz.model.QuizData;
 import java.util.jar.JarFile;
 import java.io.File;
 import java.net.JarURLConnection;
@@ -24,6 +27,7 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.openjfx.javaquiz.JavaQuiz;
 
 
 /**
@@ -208,7 +212,7 @@ public class MenuController {
      */
     public static List listJsonFiles2() {
     try {
-        URI uri = QuizLoader.class.getResource("json/").toURI();
+        URI uri =  QuizLoader.class.getResource("/org/openjfx/javaquiz/json/").toURI();
         Path path = Paths.get(uri);
         /*Files.list(path)
              .filter(Files::isRegularFile)
