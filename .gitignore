@@ -1,5 +1,5 @@
  
-#Compilados
+# Compilados
 *.class
 *.jar
 *.war
@@ -8,7 +8,7 @@ target/
 build/
 out/
 
-#IDE
+# IDE
 .idea/
 *.iml
 .vscode/
@@ -20,8 +20,8 @@ out/
 *.json
 data/
 
-#Logs
+# Logs
 *.log
 
-#Sistema
+# Sistema
 Thumbs.db
