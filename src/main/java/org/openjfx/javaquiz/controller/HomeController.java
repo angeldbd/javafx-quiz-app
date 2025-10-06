@@ -22,7 +22,6 @@ public class HomeController {
         @FXML
         private Button playquizbtn;
     
-        private double x, y;
         /**
          * aca se  muestra la pagina despues de hacer click en el bonton inicar es la pagina de las preguntas 
          * de las opciones
@@ -44,12 +43,6 @@ public class HomeController {
                         if(fxmlLoader == null) throw new IllegalArgumentException("No se encontró el archivo fxml: " +"menu.fxml"); 
                         Scene scene = new Scene(fxmlLoader.load());
                         Stage stage = new Stage();
-                        /*
-                        // mover ventana con mouse
-                        scene.setOnMousePressed(e->{
-                                stage.setX(e.getScreenX()- x);
-                                stage.setY(e.getScreenY() - y);
-                        });*/
                         stage.setScene(scene);
                         stage.initStyle(StageStyle.TRANSPARENT);
                         scene.setFill(Color.TRANSPARENT);
