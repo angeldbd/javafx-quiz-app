@@ -6,6 +6,7 @@ import org.openjfx.javaquiz.JavaQuiz;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +18,7 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.openjfx.javaquiz.util.LoggerUtil;
 
 /**
  * Controlador para la selección de temas del quiz
@@ -29,6 +31,8 @@ public class MenuController {
     
     private TopicService topicService;
     private List<QuizData> selectedQuizData;
+    
+    private static final Logger LOGGER = LoggerUtil.getLogger(MenuController.class);
     
     public MenuController() {
         this.topicService = new TopicService();
@@ -80,8 +84,8 @@ public class MenuController {
      */
     private void startQuiz() {
         if (selectedQuizData.isEmpty()) {
-            showAlert("Advertencia", "Por favor, agrega al menos un tema antes de iniciar.");
-            return;
+                showAlert("Advertencia", "Por favor, agrega al menos un tema antes de iniciar.");
+                return;
         }
         
         try {
@@ -104,8 +108,8 @@ public class MenuController {
             current.close();
             
         } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("Error", "No se pudo iniciar el quiz: " + e.getMessage());
+                LOGGER.severe("Error iniciando quiz: " + e.getMessage());
+                showAlert("Error", "No se pudo iniciar el quiz: " + e.getMessage());
         }
     }
     

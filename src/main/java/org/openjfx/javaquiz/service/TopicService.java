@@ -4,6 +4,7 @@ package org.openjfx.javaquiz.service;
 
 import org.openjfx.javaquiz.repository.QuizLoader;
 import org.openjfx.javaquiz.model.QuizData;
+import org.openjfx.javaquiz.util.LoggerUtil;
 
 import java.net.URI;
 import java.nio.file.Files;
@@ -12,30 +13,34 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.logging.Logger;
 
 /**
  * Servicio para manejar la carga de tópicos disponibles
  */
 public class TopicService {
     
+        private static final Logger LOGGER = LoggerUtil.getLogger(TopicService.class);
     /**
      * Obtiene la lista de tópicos disponibles desde los archivos JSON
      */
     public List<String> getAvailableTopics() {
+        LOGGER.info("Cargando tópicos disponibles...");
         try {
             URI uri = QuizLoader.class.getResource("/org/openjfx/javaquiz/json/").toURI();
             Path path = Paths.get(uri);
             
-            return Files.list(path)
+            List<String> topics = Files.list(path)
                     .filter(Files::isRegularFile)
                     .filter(p -> p.getFileName().toString().endsWith(".json"))
                     .map(p -> p.getFileName().toString().replace(".json", ""))
                     .sorted()
                     .collect(Collectors.toList());
                     
+                        LOGGER.info("Se encontraron " + topics.size() + " tópicos");
+                        return topics;
         } catch (Exception e) {
-            System.err.println("Error cargando tópicos: " + e.getMessage());
-            e.printStackTrace();
+                LOGGER.severe("Error cargando tópicos: " + e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -44,6 +49,8 @@ public class TopicService {
      * Carga los datos de quiz para una lista de tópicos
      */
     public List<QuizData> loadTopics(List<String> topicNames) {
+        LOGGER.info("Cargando " + topicNames.size() + " tópico(s)");
+        
         List<QuizData> quizDataList = new ArrayList<>();
         
         for (String topicName : topicNames) {
@@ -51,10 +58,10 @@ public class TopicService {
             if (data != null) {
                 quizDataList.add(data);
             } else {
-                System.err.println("No se pudo cargar el tópico: " + topicName);
+                LOGGER.warning("No se pudo cargar el tópico: " + topicName);
             }
         }
-        
+        LOGGER.info("Cargados exitosamente " + quizDataList.size() + " tópico(s)");
         return quizDataList;
     }
     

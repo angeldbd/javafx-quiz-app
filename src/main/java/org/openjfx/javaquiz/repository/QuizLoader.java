@@ -2,16 +2,22 @@ package org.openjfx.javaquiz.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openjfx.javaquiz.model.QuizData;
-import java.io.InputStream;
+import org.openjfx.javaquiz.util.LoggerUtil;
 
+import java.io.InputStream;
+import java.util.logging.Logger;
 /**
  * Esta clase que carga los datos del json, con su metodo mapper.redValue
  * @author angel
  */
 public class QuizLoader {
+    
+                private static final Logger LOGGER = LoggerUtil.getLogger(QuizLoader.class);
 
-    public static QuizData loadQuizData(String fileName) {
+                public static QuizData loadQuizData(String fileName) {
         
+                LOGGER.info("Cargando quiz: " + fileName);
+                
                 ObjectMapper mapper = new ObjectMapper();
             
                 // Ruta ABSOLUTA desde la raíz de resources
@@ -21,6 +27,7 @@ public class QuizLoader {
 
             
                 if ( is == null){
+                LOGGER.severe("No se encontró el archivo JSON: " + fileName);
                 throw new IllegalArgumentException("No se encontró el archivo JSON: " + fileName);
                 }
             
@@ -33,10 +40,12 @@ public class QuizLoader {
                 q.getX().forEach(x -> System.out.println("X: " + x));
                 System.out.println("----");
             });*/
+                LOGGER.info("Quiz cargado exitosamente: " + fileName + 
+                       " (" + data.getQuestions().size() + " preguntas)");
             
             return data;
         } catch (Exception e) {
-            System.err.println("Error cargando quiz: " + fileName);
+                LOGGER.severe("Error cargando quiz: " + fileName + " - " + e.getMessage());
             e.printStackTrace();
             return null;
         }
