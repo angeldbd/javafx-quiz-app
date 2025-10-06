@@ -35,8 +35,6 @@ import org.openjfx.javaquiz.JavaQuiz;
  * @author angel
  */
 public class MenuController {
-        @FXML
-        private ComboBox<String> comboBoxid;
 
         @FXML
         private Button iniciarBtn, agregarTema;
@@ -57,67 +55,6 @@ public class MenuController {
                 // Cargar los nombres de los temas (puedes obtenerlos desde los nombres de los archivos JSON)
                 availableTopics = loadAvailableTopics();
                 topicsListView.setItems(FXCollections.observableArrayList(availableTopics));
-                
-                // llenar el combo box con los temas disponibles
-                comboBoxid.getItems().addAll(
-                        "A-BASICS", "B-OOP", "C-INHERITANCE", "D-STATIC", "E-OVERLOADINGOVERRIDING",
-                        "F-POLYMORPHISM", "G-ABSTRACTION", "H-PACKAGE", "I-INTERNATIONALIZATION", 
-                        "J-SERIALIZATION", "K-REFLECTION", "L-GARBAGECOLLECTION", "M-INNERCLASSES", 
-                        "N-STRING", "O-EXCEPTIONHANDLING", "P-MULTI-THREADING", "Q-MIXEDQUESTIONS",
-                        "R-JAVACOLLECTION", "S-ADVANCEDMULTI-THREADING", "T-JAVA8", 
-                        "U-JAVATRICKYQUESTIONS", "V-JSP", "W-JAVADESIGNPATTERNS", "X-SPRINGQUESTIONS",
-                        "Y-HIBERNETE", "Z-MAVEN", "ZA-GIT", "ZB-AWS", "ZC-DOCKER", 
-                        "ZD-UNIXSHELL", "ZE-MICROSERVICES"
-                );
-                
-                /*
-                        //La logica del combobox
-                iniciarBtn.setOnAction(event -> {
-                        // obtener temas seleccionados
-                        List<String> selectedTopics = (List<String>) topicsListView.getSelectionModel().getSelectedItems();
-                        
-                        if(selectedTopics.isEmpty()){
-                            // Mostrar mensaje de error si no se seleccionó nignún tema
-                            System.out.println("Por favor, selecciona al menos un tema.");
-                            return;
-                        }
-                        
-                        // Cargar preguntas de los temas seleccionados
-                        selectedQuizData = new ArrayList<>();
-                        for (String topic : selectedTopics) {
-                        QuizData data= QuizLoader.loadQuizData(topic);
-                        if(data != null){
-                            selectedQuizData.add(data);
-                        }
-                    }
-                        
-                        String selectdTopic = comboBoxid.getValue();
-                        
-                        if(selectdTopic != null){
-                                try {
-                                        FXMLLoader loader = new FXMLLoader(JavaQuiz.class.getResource("quiz1.fxml"));
-                                        Scene scene = new Scene(loader.load());
-                                        
-                                        QuizController qc = loader.getController();
-                                        qc.setData(QuizLoader.loadQuizData(selectdTopic),selectdTopic);
-                                        
-                                        Stage stage = new Stage();
-                                        stage.setScene(scene);
-                                        stage.initStyle(StageStyle.TRANSPARENT);
-                                        scene.setFill(Color.TRANSPARENT);
-                                        stage.show();
-                                        
-                                        // cerrar menu
-                                        Stage current = (Stage) iniciarBtn.getScene().getWindow();
-                                        current.close();
-                            } catch (Exception e) {
-                                        e.printStackTrace();
-                            }
-                        }
-                        
-                        
-                });
-                */
                 
                 iniciarBtn.setOnAction(event -> startQuiz());
                 
