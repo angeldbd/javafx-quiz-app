@@ -40,7 +40,8 @@ public class HomeController {
                               Stage thisstage =  (Stage)((Button)event.getSource()).getScene().getWindow();
                         thisstage.close();
                         
-                        FXMLLoader fxmlLoader = new FXMLLoader(JavaQuiz.class.getResource("menu.fxml"));
+                        FXMLLoader fxmlLoader = new FXMLLoader(JavaQuiz.class.getResource("/org/openjfx/javaquiz/fxml/"+"menu.fxml"));
+                        if(fxmlLoader == null) throw new IllegalArgumentException("No se encontró el archivo fxml: " +"menu.fxml"); 
                         Scene scene = new Scene(fxmlLoader.load());
                         Stage stage = new Stage();
                         /*

@@ -24,7 +24,7 @@ public class JavaQuiz extends Application {
     public void start(Stage stage) throws IOException {
         
         scene = new Scene(loadFXML("JavaQuiz"));
-        scene.getStylesheets().add(JavaQuiz.class.getResource("JavaQuiz.css").toExternalForm());
+        scene.getStylesheets().add(JavaQuiz.class.getResource("/org/openjfx/javaquiz/css/"+"JavaQuiz.css").toExternalForm());
         stage.setTitle("Easy Quiz");
         stage.setScene(scene);
         stage.initStyle(StageStyle.TRANSPARENT);
@@ -37,16 +37,27 @@ public class JavaQuiz extends Application {
     }
 
     private static Parent loadFXML(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(JavaQuiz.class.getResource(fxml + ".fxml"));
+     
+        String fxmlPath = "/org/openjfx/javaquiz/fxml/" + fxml + ".fxml";
+        FXMLLoader fxmlLoader = new FXMLLoader(JavaQuiz.class.getResource(fxmlPath));
+                if    ( fxmlLoader == null)throw new IllegalArgumentException("No se encontró el archivo fxml: " + fxml); 
         return fxmlLoader.load();
     }
 
     public static void main(String[] args) {
-        URL url = JavaQuiz.class.getResource("JavaQuiz.fxml");
-        if (url == null)System.out.println("¡No está el FXML donde crees, idiota!");
+        String fxmlPath = "/org/openjfx/javaquiz/fxml/" + "JavaQuiz.fxml"; 
+        URL url = JavaQuiz.class.getResource(fxmlPath);
+        if (url == null){
+            System.out.println("¡No está el FXML donde crees, idiota!");
+            throw new IllegalArgumentException("No se encontró el archivo fxml: " + "JavaQuiz.fxml");
+        }
         
-        URL cssurl = JavaQuiz.class.getResource("JavaQuiz.css");
-        if (url == null) System.out.println("css encontrado en: " + cssurl);
+        String cssPath = "/org/openjfx/javaquiz/css/" + "JavaQuiz.css"; 
+        URL cssurl = JavaQuiz.class.getResource(cssPath);
+        if (url == null) {
+            System.out.println("css encontrado en: " + cssurl);
+            throw new IllegalArgumentException("No se encontró el archivo css: " + "JavaQuiz.css");
+        }
         
         launch();
     }

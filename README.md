@@ -42,34 +42,34 @@ Una aplicación de escriotorio desarrollado con JavaFX para evaluar conocimiento
 
 📁 Estructura del Proyecto
 src/main/java/org/openjfx/javaquiz/
-├── JavaQuiz.java           # Punto de entrada de la aplicación
-├── model/                  # Clases de datos
-│   ├── Question.java       # Modelo de pregunta
-│   ├── QuizData.java       # Contenedor de preguntas
-│   └── TopicStats.java     # Estadísticas por tema
-├── controller/             # Controladores JavaFX
-│   ├── HomeController.java
-│   ├── MenuController.java
-│   ├── QuizController.java
-│   └── ResultController.java
-├── repository/             # Acceso a datos
-│   └── QuizLoader.java     # Carga de preguntas desde JSON
-└── util/                   # Utilidades
-    └── CodeDisplay.java    # Visualización de código
+                                    ├── JavaQuiz.java           # Punto de entrada de la aplicación
+                                    ├── model/                  # Clases de datos
+                                    │   ├── Question.java       # Modelo de pregunta
+                                    │   ├── QuizData.java       # Contenedor de preguntas
+                                    │   └── TopicStats.java     # Estadísticas por tema
+                                        ├── controller/             # Controladores JavaFX
+                                        │   ├── HomeController.java
+                                        │   ├── MenuController.java
+                                        │   ├── QuizController.java
+                                        │   └── ResultController.java
+                                    ├── repository/             # Acceso a datos
+                                    │   └── QuizLoader.java     # Carga de preguntas desde JSON
+                                    └── util/                   # Utilidades
+                                        └── CodeDisplay.java    # Visualización de código
 
 src/main/resources/org/openjfx/javaquiz/
-├── fxml/                   # Interfaces de usuario
-│   ├── JavaQuiz.fxml
-│   ├── menu.fxml
-│   ├── quiz1.fxml
-│   └── result.fxml
-├── json/                   # Base de datos de preguntas
-│   ├── A-BASICS.json
-│   ├── B-OOP.json
-│   └── ... (35+ archivos)
-└── css/                    # Estilos
-    ├── JavaQuiz.css
-    └── javaCodePane.css
+                                        ├── fxml/                   # Interfaces de usuario
+                                        │   ├── JavaQuiz.fxml
+                                        │   ├── menu.fxml
+                                        │   ├── quiz1.fxml
+                                        │   └── result.fxml
+                                        ├── json/                   # Base de datos de preguntas
+                                        │   ├── A-BASICS.json
+                                        │   ├── B-OOP.json
+                                        │   └── ... (35+ archivos)
+                                        └── css/                    # Estilos
+                                            ├── JavaQuiz.css
+                                            └── javaCodePane.css
 
 🛠️ Tecnologías
 

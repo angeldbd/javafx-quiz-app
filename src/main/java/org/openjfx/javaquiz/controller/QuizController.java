@@ -1,28 +1,18 @@
 package org.openjfx.javaquiz.controller;
 
-
-import org.openjfx.javaquiz.controller.ResultController;
 import org.openjfx.javaquiz.model.Question;
 import org.openjfx.javaquiz.model.QuizData;
+import org.openjfx.javaquiz.service.QuizService;
+import org.openjfx.javaquiz.service.TimerService;
 import org.openjfx.javaquiz.util.CodeDisplay;
+import org.openjfx.javaquiz.util.NavigationUtil;
+import org.openjfx.javaquiz.JavaQuiz;
+
 import java.io.IOException;
-import javafx.util.Duration;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
-import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -32,403 +22,323 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.util.Duration;
 import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.model.StyleSpans;
-import org.fxmisc.richtext.model.StyleSpansBuilder;
-import org.openjfx.javaquiz.JavaQuiz;
 
 
 /**
- *
- * @author angel
+ * Controlador para la pantalla del quiz
+ * Responsabilidad: SOLO manejo de UI y eventos
  */
 
 
 public class QuizController {
 
-    @FXML 
-    private ScrollPane scrollPaneId;
-    
-    @FXML
-    private AnchorPane codePane;
-    
-    @FXML
-    private Button terminarBtn;
-    
-    @FXML
-    private ProgressBar timeBar;
-    
-      @FXML
-    private Label timerLabel;
-      
-    private Timeline  timeline;
-    private int timeSeconds; // tiempo por segundos
-    
-    @FXML
-    private Label question, position;
+    // ========== COMPONENTES UI ==========
+    @FXML private ScrollPane scrollPaneId;
+    @FXML private AnchorPane codePane;
+    @FXML private Button terminarBtn;
+    @FXML private ProgressBar timeBar;
+    @FXML private Label timerLabel;
+    @FXML private Label question, position;
+    @FXML private Button opt1, opt2, opt3, opt4;
+    @FXML private Button btnAtras, btnSiguiente, closeBtn, menuBtn, codeBtn, shuffleBtn;
 
-    @FXML
-    private Button opt1, opt2, opt3, opt4, btnAtras, btnSiguiente, closeBtn, menuBtn, codeBtn, shuffleBtn;
-
-    private QuizData data;
-    private List<Question> questions;
+    // ========== SERVICIOS ==========
+    private QuizService quizService;
+    private TimerService timerService;
     
-    // Map para guardad estadísticas por tópico
-    private Map<String, int[]> statsByTopic = new HashMap<>();
-    // int[0] = correctas; int[1] = incorrectas
-    
-    private int counter = 0;
-    private int correct = 0;
-    private int wrong = 0;
-    private int vuelta = 0;
-    
+    // ========== DATOS PARA RESULT ==========
+    private List<QuizData> selectedQuizData;
     private String currentTopic;
-    private Set<Integer> answeredQuestions = new HashSet<>();
-    private List<QuizData> selectedQuizData; // Agrega esta variable
-    
-    // Inyectar datos (desde restart o initialize)
-    public void setData(QuizData data, String title) {
-        // Filtrar solo preguntas de un tema creo
-        /*this.questions = data.getQuestions().stream()
-        .filter(q -> q.getTopic().equals("Java"))
-        .collect(Collectors.toList());*/
-        /*para la selección de preguntas*/
-        this.questions = data.getQuestions();
-        this.data = data;
-        setCurrentTopic( title);
-        resetQuiz();
+
+    // ========== CONSTRUCTOR ==========
+    public QuizController() {
+        this.quizService = new QuizService();
+        this.timerService = new TimerService();
+        
+        // Configurar callback cuando se acabe el tiempo
+        this.timerService.setOnTimeout(() -> handleTimeout());
     }
+
+    // ========== INICIALIZACIÓN ==========
+    
+    /**
+     * Inicializa con un solo QuizData
+     */
+    public void setData(QuizData data, String title) {
+        this.currentTopic = title;
+        this.selectedQuizData = List.of(data);
+        quizService.initialize(data.getQuestions());
+        startQuiz();
+    }
+
+    /**
+     * Inicializa con múltiples QuizData
+     */
     public void setQuizData(List<QuizData> quizDataList) {
-        this.selectedQuizData = quizDataList; // Almacena la lista
-        this.questions = new ArrayList<>();
-        for (QuizData data : quizDataList) {
-            questions.addAll(data.getQuestions());
+        this.selectedQuizData = quizDataList;
+        this.currentTopic = quizDataList.size() == 1 
+            ? quizDataList.get(0).getQuestions().get(0).getTopic() 
+            : "Múltiples temas";
+        quizService.initializeMultiple(quizDataList);
+        startQuiz();
+    }
+
+    /**
+     * Inicia el quiz
+     */
+    private void startQuiz() {
+        setupTimerBindings();
+        updateUI();
+        timerService.start();
+    }
+
+    /**
+     * Configura los bindings del timer con la UI
+     */
+    private void setupTimerBindings() {
+        // Binding automático: cuando cambie el tiempo, actualiza el label
+        timerService.timeSecondsProperty().addListener((obs, oldVal, newVal) -> {
+            timerLabel.setText("Tiempo: " + newVal);
+        });
+        
+        // Binding automático: cuando cambie el progreso, actualiza la barra
+        timerService.progressProperty().addListener((obs, oldVal, newVal) -> {
+            timeBar.setProgress(newVal.doubleValue());
+            timeBar.setStyle(timerService.getProgressColor());
+        });
+    }
+
+    // ========== EVENTOS DE RESPUESTA ==========
+    
+    @FXML
+    private void optionClicked(ActionEvent event) {
+        // Si ya fue respondida, ignorar
+        if (quizService.isCurrentQuestionAnswered()) {
+            return;
         }
         
-        this.currentTopic = quizDataList.size() == 1 ? quizDataList.get(0).getQuestions().get(0).getTopic() : "Múltiples temas";
-        resetQuiz();
+        Button clicked = (Button) event.getSource();
+        String selectedAnswer = clicked.getText();
+        
+        // Validar respuesta
+        boolean isCorrect = quizService.checkAnswer(selectedAnswer);
+        quizService.registerAnswer(isCorrect);
+        
+        // Aplicar estilos
+        if (isCorrect) {
+            clicked.setStyle("-fx-background-color: green;");
+        } else {
+            clicked.setStyle("-fx-background-color: red;");
+            highlightCorrectAnswer();
+        }
+        
+        // Pausa y continuar
+        PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
+        pause.setOnFinished(e -> {
+            quizService.goNext();
+            if (quizService.isFinished()) {
+                showResult();
+            } else {
+                updateUI();
+                timerService.restart();
+            }
+        });
+        pause.play();
     }
 
-
-    private void loadQuestions() {
-        if (counter >= questions.size()) return;
+    /**
+     * Resalta la respuesta correcta cuando el usuario falla
+     */
+    private void highlightCorrectAnswer() {
+        Question q = quizService.getCurrentQuestion();
+        if (q == null) return;
         
-        Question q = questions.get(counter);
-        question.setText(q.getQ() + " " + '['+q.getTopic()+']');
+        String correctAnswer = q.getA();
+        if (opt1.getText().equals(correctAnswer)) opt1.setStyle("-fx-background-color: green;");
+        if (opt2.getText().equals(correctAnswer)) opt2.setStyle("-fx-background-color: green;");
+        if (opt3.getText().equals(correctAnswer)) opt3.setStyle("-fx-background-color: green;");
+        if (opt4.getText().equals(correctAnswer)) opt4.setStyle("-fx-background-color: green;");
+    }
 
-        // Mezclar opciones
+    /**
+     * Maneja cuando se acaba el tiempo
+     */
+    private void handleTimeout() {
+        quizService.registerTimeout();
+        quizService.goNext();
+        
+        if (quizService.isFinished()) {
+            showResult();
+        } else {
+            updateUI();
+            timerService.restart();
+        }
+    }
+
+    // ========== NAVEGACIÓN ==========
+    
+    @FXML
+    private void goNextQuestion() {
+        quizService.goNext();
+        if (quizService.isFinished()) {
+            showResult();
+        } else {
+            updateUI();
+            timerService.restart();
+        }
+    }
+
+    @FXML
+    private void goPreviousQuestion() {
+        quizService.goPrevious();
+        updateUI();
+        timerService.restart();
+    }
+
+    @FXML
+    private void finishQuiz(ActionEvent event) {
+        showResult();
+    }
+
+    @FXML
+    private void goToMenu(ActionEvent event) {
+        try {
+            timerService.stop();
+            NavigationUtil.loadSceneTransparent("menu.fxml", menuBtn);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void closeApp() {
+        timerService.stop();
+        NavigationUtil.closeWindow(closeBtn);
+    }
+
+    // ========== FUNCIONES AUXILIARES ==========
+    
+    @FXML
+    private void shuffleQuestions() {
+        quizService.shuffle();
+        updateUI();
+        timerService.restart();
+    }
+
+    @FXML
+    private void showCodeWindow() {
+        Question q = quizService.getCurrentQuestion();
+        if (q == null || q.getCode() == null || q.getCode().isEmpty()) {
+            return;
+        }
+        
+        if (scrollPaneId.isVisible()) {
+            scrollPaneId.setVisible(false);
+            codeBtn.setText("Mostrar Código");
+        } else {
+            CodeArea codeArea = CodeDisplay.createCodeArea(q.getCode());
+            codePane.getChildren().clear();
+            codePane.getChildren().add(codeArea);
+            
+            AnchorPane.setTopAnchor(codeArea, 0.0);
+            AnchorPane.setLeftAnchor(codeArea, 0.0);
+            AnchorPane.setRightAnchor(codeArea, 0.0);
+            AnchorPane.setBottomAnchor(codeArea, 0.0);
+            
+            scrollPaneId.setVvalue(0.0);
+            scrollPaneId.setVisible(true);
+            scrollPaneId.toFront();
+            codeBtn.setText("Ocultar Código");
+        }
+    }
+
+    // ========== ACTUALIZACIÓN DE UI ==========
+    
+    /**
+     * Actualiza toda la interfaz con la pregunta actual
+     */
+    private void updateUI() {
+        Question q = quizService.getCurrentQuestion();
+        if (q == null) return;
+        
+        // Actualizar pregunta
+        question.setText(q.getQ() + " [" + q.getTopic() + "]");
+        position.setText(String.valueOf(q.getPosition()));
+        
+        // Mezclar y mostrar opciones
         List<String> options = new ArrayList<>(q.getX());
         options.add(q.getA());
         Collections.shuffle(options);
+        
         opt1.setText(options.get(0));
         opt2.setText(options.get(1));
         opt3.setText(options.get(2));
         opt4.setText(options.get(3));
-        position.setText(String.valueOf(q.getPosition()));
         
-        // Mostrar botón de código si existe
+        // Resetear estilos
+        resetButtonStyles();
+        
+        // Mostrar/ocultar botón de código
         codeBtn.setVisible(q.getCode() != null && !q.getCode().isEmpty());
-        if(scrollPaneId != null)scrollPaneId.setVisible(false); // Oculta al cargar nueva pregunta
-        
+        if (scrollPaneId != null) {
+            scrollPaneId.setVisible(false);
+        }
     }
 
     /**
-     * Esta funcion resive el evento click del boton
-     * luego valida si los datos son correctos e incorrectos
-     * da los estilos
-     * aunmenta las variables de correcto e incorrecto para el resultado final
-     * hace una pausa y aunmenta el valor del counter para seguir 
-     * a la siguiente pregunta 
-     * @param event 
+     * Resetea los estilos de los botones
      */
-    @FXML
-    private void optionClicked(ActionEvent event) {
-        
-        if(answeredQuestions.contains(counter)){
-            try {
-                return;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        Button clicked = (Button) event.getSource();
-        
-        if (checkAnswer(clicked.getText())){
-                clicked.setStyle("-fx-background-color: green;");
-                correct++;
-                registerAnswer(questions.get(counter), true);
-        }
-        else{
-            clicked.setStyle("-fx-background-color: red;");
-            wrong++;
-            registerAnswer(questions.get(counter), false);
-            
-            /*PARA QUE ES ESTO ??*/
-            Question q = questions.get(counter);
-            
-            if(opt1.getText().equals(q.getA())) opt1.setStyle("-fx-background-color: green;");
-        }
-        answeredQuestions.add(counter); // Marcar como contestada
-        PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
-        pause.setOnFinished(e -> {
-                counter++;
-                if (counter >= questions.size()) {
-                        try {
-                                showResult();
-                        } catch ( IOException er ) {
-                                er.printStackTrace();
-                        }
-                } else {
-                        loadQuestions();
-                        resetButtonStyles();
-                        startTimer();
-        }
-        });
-        pause.play();
-    }
-    
-    /**
-     * En este metodo solo actualizamos la pantalla con la pregunta siguiente y si
-     * llega al final se reinicia.
-     * cuando llega al principio llega al final
-     * 
-     */
-    
-    /**
-     * Este metodo se encarga de avanzar una pregunta
-     * @throws IOException 
-     */
-        @FXML
-        private void goNextQuestion() throws IOException{
-                counter = (counter + 1 ) % questions.size();
-                
-                if (counter >= questions.size()) {
-                        showResult();
-                }       else {
-                        updateQuestion();
-                }
-            /*if(counter == data.getQuestions().size()-1){
-                        counter = 0;
-                        loadQuestions();
-                        resetButtonStyles();
-                } else {
-                        counter++;
-                        loadQuestions();
-                        resetButtonStyles();
-                }*/
-    }
-        /**
-         * Este metodo se encarga de retroceder una pregunta
-         */
-        @FXML
-        private void goPreviousQuestion(){
-                counter = (counter - 1 + data.getQuestions().size()) % data.getQuestions().size();
-                updateQuestion();
-                
-                /*
-                if(counter == 0){
-                        counter = data.getQuestions().size()-1;
-                        updateQuestion();
-                }
-                else if((counter != 0) && counter <= data.getQuestions().size()){
-                        counter--;
-                        updateQuestion();
-                }*/
-        }
-    
-        private void updateQuestion(){
-                loadQuestions();
-                resetButtonStyles();
-                startTimer(); 
-        }
-        
-        private void resetButtonStyles(){
-        opt1.setStyle("-fx-background-color: dodgerblue;");
-        opt2.setStyle("-fx-background-color: dodgerblue;");
-        opt3.setStyle("-fx-background-color: dodgerblue;");
-        opt4.setStyle("-fx-background-color: dodgerblue;");
-    }
-    
-    private void showResult() throws IOException {
-        if(timeline != null){
-            timeline.stop();
-        }
-        FXMLLoader loader = new FXMLLoader(JavaQuiz.class.getResource("result.fxml"));
-        Parent root = loader.load();
-
-        ResultController rc = loader.getController();
-        rc.setResult(correct, wrong, questions.size(), getCurrentTopic(), selectedQuizData);
-        rc.setStats(statsByTopic); // Pasamos el Map con las estadísticas
-        
-        Stage stage = new Stage();
-        stage.setScene(new Scene(root));
-        stage.show();
-
-        // Cerrar la ventana del quiz
-        Stage current = (Stage) question.getScene().getWindow();
-        current.close();
+    private void resetButtonStyles() {
+        String defaultStyle = "-fx-background-color: dodgerblue;";
+        opt1.setStyle(defaultStyle);
+        opt2.setStyle(defaultStyle);
+        opt3.setStyle(defaultStyle);
+        opt4.setStyle(defaultStyle);
     }
 
-    private boolean checkAnswer(String answer) {
-        Question q = questions.get(counter);
-        return answer.equals(q.getA());
-    }
-
-    public void resetQuiz() {
-        counter = 0;
-        correct = 0;
-        wrong = 0;
-        answeredQuestions.clear();
-        updateQuestion();
-    }
+    // ========== MOSTRAR RESULTADO ==========
     
-        @FXML
-        private void closeApp() {
-        Stage stage = (Stage) closeBtn.getScene().getWindow();
-        stage.close();
-        }
+    private void showResult() {
+        timerService.stop();
         
-        /**
-         * Tiempo de espera por preguntas
-         */
-        private void startTimer(){
-        
-                if (timeline != null) {
-                timeline.stop(); // detener el timer anterior
-                 }
-                timeSeconds = 15;
-                timeBar.setProgress(1.0);// inicia la barra llena
-                
-            
-                timeline = new Timeline(
-                new KeyFrame(Duration.seconds(1), e-> {
-                        timeSeconds--;
-                        timerLabel.setText("Tiempo: " + timeSeconds);
-                        
-                        // actualizar barra (de 1 → 0)
-                        double progress = (double) timeSeconds / 15.0;
-                        timeBar.setProgress(progress);
-                        // cambia el color a medida que se acaba el tiempo
-                        // cambiar color con CSS inline
-                        if (progress > 0.6) {
-                            timeBar.setStyle("-fx-accent: green;");
-                        } else if (progress > 0.3) {
-                            timeBar.setStyle("-fx-accent: orange;");
-                        } else {
-                            timeBar.setStyle("-fx-accent: red;");
-}
-                        if(timeSeconds <= 0 ){
-                                timeline.stop();
-                                wrong++;
-                            try {
-                                goNextQuestion();
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
-                            }
-                        }
-                })
-        );
-            timeline.setCycleCount(timeSeconds);
-    timeline.play();
-        
-        }
+        try {
+            String fxmlPath = "/org/openjfx/javaquiz/fxml/";
+            FXMLLoader loader = new FXMLLoader(JavaQuiz.class.getResource(fxmlPath + "result.fxml"));
+            Parent root = loader.load();
 
-        @FXML
-        private void goToMenu(ActionEvent event){
-                try{
-                        FXMLLoader loader = new FXMLLoader(JavaQuiz.class.getResource("menu.fxml"));
-                        Scene scene = new Scene(loader.load());
-                        
-                        Stage stage = new Stage();
-                        stage.setScene(scene);
-                        stage.initStyle(StageStyle.TRANSPARENT);
-                        scene.setFill(Color.TRANSPARENT);
-                        stage.show();
-                        
-                        // cerrar ventana del quiz
-                        Stage current =  (Stage) menuBtn.getScene().getWindow();
-                        current.close();
-                        
-                } catch(Exception ex){
-                    ex.printStackTrace();
-                }
+            ResultController rc = loader.getController();
+            rc.setResult(
+                quizService.getCorrectAnswers(), 
+                quizService.getWrongAnswers(), 
+                quizService.getTotalQuestions(), 
+                currentTopic, 
+                selectedQuizData
+            );
+            rc.setStats(quizService.getStatsByTopic());
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.show();
+
+            // Cerrar ventana del quiz
+            Stage current = (Stage) question.getScene().getWindow();
+            current.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        
-        @FXML
-        private void finishQuiz(ActionEvent event){
-            try{
-                showResult();
-            }catch(Exception ex ){
-                ex.printStackTrace();
-            }
-        }
-        
-        @FXML
-        private void showCodeWindow(){
-                Question q = questions.get(counter);
-                
-                if(q.getCode() == null || q.getCode().isEmpty()) return;
-                
-                if (scrollPaneId.isVisible()) {
-                    scrollPaneId.setVisible(false);
-                    codeBtn.setText("Mostrar Código");
-                } else {
-                    CodeArea codeArea = CodeDisplay.createCodeArea(q.getCode());
-                    codePane.getChildren().addAll(codeArea);
-                   AnchorPane.setTopAnchor(codeArea, 0.0);
-        AnchorPane.setLeftAnchor(codeArea, 0.0);
-        AnchorPane.setRightAnchor(codeArea, 0.0);
-        AnchorPane.setBottomAnchor(codeArea, 0.0);
-        scrollPaneId.setVvalue(0.0);
-        scrollPaneId.setVisible(true);
-        scrollPaneId.toFront();
-        codeBtn.setText("Ocultar Código");
-        codePane.requestLayout();
-        scrollPaneId.requestLayout();
-                    
-                }
-        }
-        
-        // llamar cuando el ususario responda
-        /**
-         * putIfAbsent(q.getTopic(), new int[2]); → si el tópico no existe en el map, lo crea con [0,0].
-         * statsByTopic.get(q.getTopic()) → obtiene el array del tópico.
-         * stats[0]++ → suma una respuesta correcta.
-         * stats[1]++ → suma una respuesta incorrecta.
-         * 👉 Así cada tópico guarda cuántas correctas e incorrectas llevas.
-         * @param q
-         * @param isCorrect 
-         */
-        private void registerAnswer(Question q, boolean isCorrect){
-            statsByTopic.putIfAbsent(q.getTopic(), new int[2]);
-            int[] stats = statsByTopic.get(q.getTopic());
-            if(isCorrect) stats[0]++;
-            else stats[1]++;
-        }
-        
-        // boton para mezclar
-        @FXML
-        private void shuffleQuestions(){
-                Collections.shuffle(questions);
-                counter = 0; // Reinicia para mostrar desde la primera pregunta
-                answeredQuestions.clear();
-                correct=0;
-                wrong=0;
-                System.out.println("tamanio "+ answeredQuestions.size());
-                loadQuestions();
-        }
-        
-        public void setCurrentTopic(String currentTopic) {
+    }
+
+    // ========== GETTERS ==========
+    
+    public void setCurrentTopic(String currentTopic) {
         this.currentTopic = currentTopic;
-        }
+    }
 
-        public String getCurrentTopic() {
+    public String getCurrentTopic() {
         return currentTopic;
-        }
-        
+    }
 }

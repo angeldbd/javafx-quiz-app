@@ -84,7 +84,8 @@ public class ResultController {
 
     @FXML
     private void restartQuiz(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(JavaQuiz.class.getResource("quiz1.fxml"));
+        String fxmlPath = "/org/openjfx/javaquiz/fxml/";
+        FXMLLoader loader = new FXMLLoader(JavaQuiz.class.getResource("/org/openjfx/javaquiz/fxml/"+"quiz1.fxml"));
         Parent root = loader.load();
 
         // Cargar preguntas nuevas

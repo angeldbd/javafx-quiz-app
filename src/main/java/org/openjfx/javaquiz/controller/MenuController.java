@@ -130,7 +130,8 @@ public class MenuController {
                 return;
             }
             try {
-                FXMLLoader loader = new FXMLLoader(JavaQuiz.class.getResource("quiz1.fxml"));
+                String fxmlPath = "/org/openjfx/javaquiz/fxml/";
+                FXMLLoader loader = new FXMLLoader(JavaQuiz.class.getResource(fxmlPath+"quiz1.fxml"));
                 Scene scene = new Scene(loader.load());
                 QuizController qc = loader.getController();
                 qc.setQuizData(selectedQuizData); // Usar selectedQuizData
