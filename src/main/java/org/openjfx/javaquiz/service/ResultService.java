@@ -1,5 +1,7 @@
 package org.openjfx.javaquiz.service;
 
+import org.openjfx.javaquiz.util.Constants;
+
 /**
  *
  * @author angel
@@ -21,13 +23,13 @@ public class ResultService {
      * Obtiene el mensaje de retroalimentación según el puntaje
      */
     public String getFeedbackMessage(double score) {
-        if (score < 0.2) {
+        if (score < Constants.SCORE_FAIL_THRESHOLD) {
             return "Oh no..! You have failed the quiz. Practice daily!";
-        } else if (score < 0.5) {
+        } else if (score < Constants.SCORE_LOW_THRESHOLD) {
             return "Oops..! Low score. Improve your knowledge.";
-        } else if (score <= 0.7) {
+        } else if (score <= Constants.SCORE_GOOD_THRESHOLD) {
             return "Good. Keep practicing for better results.";
-        } else if (score <= 0.9) {
+        } else if (score <= Constants.SCORE_EXCELLENT_THRESHOLD) {
             return "Congratulations! You scored well.";
         } else {
             return "Perfect! Full marks, excellent work!";

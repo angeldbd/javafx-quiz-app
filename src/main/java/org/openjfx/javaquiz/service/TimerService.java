@@ -7,12 +7,13 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import org.openjfx.javaquiz.util.Constants;
 
 /**
  * Servicio que maneja el temporizador del quiz
  */
 public class TimerService {
-                private static final int MAX_SECONDS = 15;
+                private static final int MAX_SECONDS = Constants.TIMER_SECONDS;
 
                 private Timeline timeline;
                 private IntegerProperty timeSeconds;
@@ -112,9 +113,9 @@ public class TimerService {
                      */
                     public String getProgressColor() {
                         double p = progress.get();
-                        if (p > 0.6) {
+                        if (p > Constants.TIMER_PROGRESS_GREEN) {
                             return "-fx-accent: green;";
-                        } else if (p > 0.3) {
+                        } else if (p > Constants.TIMER_PROGRESS_ORANGE) {
                             return "-fx-accent: orange;";
                         } else {
                             return "-fx-accent: red;";
