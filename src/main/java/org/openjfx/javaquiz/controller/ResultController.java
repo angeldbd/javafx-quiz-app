@@ -2,6 +2,9 @@ package org.openjfx.javaquiz.controller;
 
 import org.openjfx.javaquiz.model.TopicStats;
 import org.openjfx.javaquiz.model.QuizData;
+import org.openjfx.javaquiz.service.ResultService;
+import org.openjfx.javaquiz.JavaQuiz;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -14,152 +17,187 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
-import javafx.stage.Stage;
 import javafx.scene.control.TreeTableView;
-import org.openjfx.javaquiz.JavaQuiz;
+import javafx.stage.Stage;
 
 /**
- * Esta clase solo se encarga de mostrar el resultado final
- * @author angel
+ * Controlador para mostrar los resultados del quiz
  */
 public class ResultController {
 
+    // ========== COMPONENTES UI ==========
+    @FXML private Label remark, marks, correcttext, wrongtext, markstext;
+    @FXML private ProgressIndicator correct_progress, wrong_progress;
+    @FXML private TreeTableView<TopicStats> tableViewId;
+    @FXML private TreeTableColumn<TopicStats, String> topicColumn;
+    @FXML private TreeTableColumn<TopicStats, Integer> wrongColumn;
+    @FXML private TreeTableColumn<TopicStats, Integer> correctColumn;
+    @FXML private BarChart<String, Number> barChart;
+
+    // ========== DATOS ==========
     private String currentTopic;
-    @FXML
-    private Label remark, marks, correcttext, wrongtext, markstext;
-
-    @FXML
-    private ProgressIndicator correct_progress, wrong_progress;
-    
-    @FXML
-    private TreeTableView<TopicStats> tableViewId;
-    
-    @FXML
-    private TreeTableColumn<TopicStats, String> topicColumn;
-
-    @FXML
-    private TreeTableColumn<TopicStats, Integer> wrongColumn;
-    
-    @FXML
-    private TreeTableColumn<TopicStats, Integer> correctColumn;
-    
-    @FXML
-    private BarChart<String, Number> barChart;
-
     private List<QuizData> selectedQuizData;
+    private ResultService resultService;
 
-    // Método que recibe los resultados desde QuizController
+    public ResultController() {
+        this.resultService = new ResultService();
+    }
+
+    // ========== CONFIGURACIÓN DE RESULTADOS ==========
+    
+    /**
+     * Configura los resultados generales del quiz
+     */
     public void setResult(int correct, int wrong, int totalQuestions, String topic, List<QuizData> quizDataList) {
+        this.currentTopic = topic;
+        this.selectedQuizData = quizDataList;
+        
+        // Calcular puntaje
+        double score = resultService.calculateScore(correct, totalQuestions);
+        
+        // Actualizar textos
         correcttext.setText("Correct: " + correct);
         wrongtext.setText("Wrong: " + wrong);
-        currentTopic  = topic;
-        this.selectedQuizData = quizDataList;
         marks.setText(correct + "/" + totalQuestions);
+        markstext.setText(resultService.formatScoreText(correct, totalQuestions));
+        remark.setText(resultService.getFeedbackMessage(score));
+        
+        // Actualizar indicadores de progreso
         correct_progress.setProgress((double) correct / totalQuestions);
         wrong_progress.setProgress((double) wrong / totalQuestions);
-        double score = (double) correct / totalQuestions;
-
-        if (score < 0.2) {
-            remark.setText("Oh no..! You have failed the quiz. Practice daily!");
-            markstext.setText(correct+"/" + totalQuestions+" Marks Score");
-        } else if (score < 0.5) {
-            remark.setText("Oops..! Low score. Improve your knowledge.");
-            markstext.setText(correct+"/" + totalQuestions+" Marks Score");
-        } else if (score <= 0.7) {
-            remark.setText("Good. Keep practicing for better results.");
-            markstext.setText(correct+"/" + totalQuestions+" Marks Score");
-        } else if (score <= 0.9) {
-            remark.setText("Congratulations! You scored well.");
-            markstext.setText(correct+"/" + totalQuestions+" Marks Score");
-        } else {
-            remark.setText("Perfect! Full marks, excellent work!");
-        }
     }
 
-    @FXML
-    private void restartQuiz(ActionEvent event) throws IOException {
-        String fxmlPath = "/org/openjfx/javaquiz/fxml/";
-        FXMLLoader loader = new FXMLLoader(JavaQuiz.class.getResource("/org/openjfx/javaquiz/fxml/"+"quiz1.fxml"));
-        Parent root = loader.load();
+    /**
+     * Configura las estadísticas por tópico
+     */
+    public void setStats(Map<String, int[]> statsByTopic) {
+        if (statsByTopic == null || statsByTopic.isEmpty()) {
+            System.out.println("No hay estadísticas por tópico");
+            return;
+        }
+        
+        setupTableColumns();
+        populateTable(statsByTopic);
+        populateBarChart(statsByTopic);
+    }
 
-        // Cargar preguntas nuevas
-        QuizController qc = loader.getController();
-        //qc.setData(QuizLoader.loadQuizData(currentTopic),currentTopic);
-        qc.setQuizData(selectedQuizData); // Usa selectedQuizData
-        Stage stage = new Stage();
-        stage.setScene(new Scene(root));
-        stage.show();
-
-        // Cerrar ventana actual
-        Stage current = (Stage) remark.getScene().getWindow();
-        current.close();
+    // ========== CONFIGURACIÓN DE TABLA ==========
+    
+    /**
+     * Configura las columnas de la tabla
+     */
+    private void setupTableColumns() {
+        topicColumn.setCellValueFactory(param -> 
+            new ReadOnlyStringWrapper(param.getValue().getValue().getTopic())
+        );
+        
+        correctColumn.setCellValueFactory(param -> 
+            new ReadOnlyObjectWrapper<>(param.getValue().getValue().getCorrect())
+        );
+        correctColumn.setCellFactory(col -> createStyledCell("correct-cell"));
+        
+        wrongColumn.setCellValueFactory(param -> 
+            new ReadOnlyObjectWrapper<>(param.getValue().getValue().getWrong())
+        );
+        wrongColumn.setCellFactory(col -> createStyledCell("wrong-cell"));
     }
     
-    public void setStats(Map<String, int[]> statsByTopic){
+    /**
+     * Crea una celda con estilo personalizado
+     */
+    private TreeTableCell<TopicStats, Integer> createStyledCell(String styleClass) {
+        return new TreeTableCell<>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    setText(String.valueOf(item));
+                    getStyleClass().add(styleClass);
+                }
+            }
+        };
+    }
+    
+    /**
+     * Puebla la tabla con los datos
+     */
+    private void populateTable(Map<String, int[]> statsByTopic) {
+        TreeItem<TopicStats> root = new TreeItem<>(new TopicStats("Root", 0, 0));
         
-                if(barChart== null){
-                    System.out.println("barChart es null (revisa fx:id en FXML)");
-                }
-                topicColumn.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getValue().getTopic()));
-                correctColumn.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getValue().getCorrect()));
-                wrongColumn.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getValue().getWrong()));
+        statsByTopic.forEach((topic, stats) -> {
+            TreeItem<TopicStats> item = new TreeItem<>(
+                new TopicStats(topic, stats[0], stats[1])
+            );
+            root.getChildren().add(item);
+        });
+        
+        tableViewId.setRoot(root);
+        tableViewId.setShowRoot(false);
+    }
 
-                //  agrego a la tabla 
-                XYChart.Series<String, Number> correctSeries = new XYChart.Series<>();
-                correctSeries.setName("Correct");
-                
-                XYChart.Series<String, Number> wrongSeries = new XYChart.Series<>();
-                wrongSeries.setName("Wrong");
-                
-                for (Map.Entry<String, int[]> entry : statsByTopic.entrySet()) {
-                        String topic = entry.getKey();
-                        int[] stats = entry.getValue();
-                        
-                        correctSeries.getData().add(new XYChart.Data<>(topic, stats[0]));
-                        wrongSeries.getData().add(new XYChart.Data<>(topic, stats[1]));
-                }
-                // le agrego estilos a las columnas
-                        correctColumn.setCellFactory(col -> new TreeTableCell<>(){
-                                @Override
-                                protected void updateItem(Integer item, boolean empty){
-                                        super.updateItem(item, empty);
-                                        if (empty || item == null) {
-                                            setText(null);
-                                            setStyle("");
-                                        } else {
-                                            setText(String.valueOf(item));
-                                            getStyleClass().add("correct-cell");
-                                        } 
-                                }
-                        });
-                         wrongColumn.setCellFactory(col -> new TreeTableCell<>() {
-                                        @Override
-                                        protected void updateItem(Integer item, boolean empty) {
-                                            super.updateItem(item, empty);
-                                            if (empty || item == null) {
-                                                setText(null);
-                                                setStyle("");
-                                            } else {
-                                                setText(String.valueOf(item));
-                                                getStyleClass().add("wrong-cell");
-                                            }
-                                        }
-                                    });
-                barChart.getData().clear();
-                barChart.getData().addAll(correctSeries, wrongSeries);
-                
-                // Convertir Map a TreeItem raíz
-                TreeItem<TopicStats> root = new TreeItem<>(new TopicStats("Root",0,0));
-                statsByTopic.forEach((topic, arr) -> root.getChildren().add(new TreeItem<>(new TopicStats(topic, arr[0], arr[1]))));
-                
-                tableViewId.setRoot(root);
-                tableViewId.setShowRoot(false);
-                
+    // ========== CONFIGURACIÓN DE GRÁFICO ==========
+    
+    /**
+     * Puebla el gráfico de barras con los datos
+     */
+    private void populateBarChart(Map<String, int[]> statsByTopic) {
+        if (barChart == null) {
+            System.err.println("BarChart es null (revisa fx:id en FXML)");
+            return;
+        }
+        
+        XYChart.Series<String, Number> correctSeries = new XYChart.Series<>();
+        correctSeries.setName("Correct");
+        
+        XYChart.Series<String, Number> wrongSeries = new XYChart.Series<>();
+        wrongSeries.setName("Wrong");
+        
+        for (Map.Entry<String, int[]> entry : statsByTopic.entrySet()) {
+            String topic = entry.getKey();
+            int[] stats = entry.getValue();
+            
+            correctSeries.getData().add(new XYChart.Data<>(topic, stats[0]));
+            wrongSeries.getData().add(new XYChart.Data<>(topic, stats[1]));
+        }
+        
+        barChart.getData().clear();
+        barChart.getData().addAll(correctSeries, wrongSeries);
+    }
+
+    // ========== NAVEGACIÓN ==========
+    
+    /**
+     * Reinicia el quiz con los mismos temas
+     */
+    @FXML
+    private void restartQuiz(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                JavaQuiz.class.getResource("/org/openjfx/javaquiz/fxml/quiz1.fxml")
+            );
+            Parent root = loader.load();
+
+            QuizController qc = loader.getController();
+            qc.setQuizData(selectedQuizData);
+            
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.show();
+
+            // Cerrar ventana actual
+            Stage current = (Stage) remark.getScene().getWindow();
+            current.close();
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
