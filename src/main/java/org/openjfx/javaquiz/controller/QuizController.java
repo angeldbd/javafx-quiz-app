@@ -232,7 +232,7 @@ public class QuizController {
     private void goToMenu(ActionEvent event) {
         try {
             timerService.stop();
-            NavigationUtil.loadSceneTransparent("menu.fxml", menuBtn);
+            NavigationUtil.loadSceneTransparent("/org/openjfx/javaquiz/fxml/menu.fxml", menuBtn);
         } catch (IOException ex) {
             ex.printStackTrace();
         }

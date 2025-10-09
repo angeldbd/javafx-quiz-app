@@ -1,5 +1,5 @@
-
 package org.openjfx.javaquiz.controller;
+
 import org.openjfx.javaquiz.model.QuizData;
 import org.openjfx.javaquiz.service.TopicService;
 import org.openjfx.javaquiz.JavaQuiz;
@@ -26,6 +26,7 @@ import org.openjfx.javaquiz.util.LoggerUtil;
 
 /**
  * Controlador para la selección de temas del quiz
+ * REFACTORIZADO: Ahora muestra temas seleccionados en ListView sin alerts molestos
  */
 public class MenuController {
 
@@ -33,7 +34,8 @@ public class MenuController {
     @FXML private Button agregarTema;
     @FXML private Button removerTema;
     @FXML private Label temasCountLabel;
-    @FXML private ListView<String> topicsListView, topicsSelectedListView;
+    @FXML private ListView<String> topicsListView;
+    @FXML private ListView<String> topicsSelectedListView;
     
     private TopicService topicService;
     private List<QuizData> selectedQuizData;
@@ -51,10 +53,8 @@ public class MenuController {
     
     @FXML
     private void initialize() {
-        // Configurar selección múltiple
+        // Configurar ListView de temas disponibles
         topicsListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        
-        // Cargar tópicos disponibles
         List<String> availableTopics = topicService.getAvailableTopics();
         topicsListView.setItems(FXCollections.observableArrayList(availableTopics));
         
@@ -62,7 +62,17 @@ public class MenuController {
         topicsSelectedListView.setItems(selectedTopicsObservable);
         topicsSelectedListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         
-        // Configurar eventos
+        // NUEVO: Doble clic para remover tema
+        topicsSelectedListView.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                String selectedTopic = topicsSelectedListView.getSelectionModel().getSelectedItem();
+                if (selectedTopic != null) {
+                    removeSingleTopic(selectedTopic);
+                }
+            }
+        });
+        
+        // Configurar eventos de botones
         iniciarBtn.setOnAction(event -> startQuiz());
         agregarTema.setOnAction(event -> addTopics());
         
@@ -70,6 +80,7 @@ public class MenuController {
         if (removerTema != null) {
             removerTema.setOnAction(event -> removeSelectedTopics());
         }
+        
         // Actualizar contador inicial
         updateCountLabel();
         
@@ -77,21 +88,18 @@ public class MenuController {
     }
     
     /**
-     * Agrega los temas seleccionados a la lista
+     * Agrega los temas seleccionados a la lista SIN ALERT MOLESTO
      */
     private void addTopics() {
         List<String> selectedTopics = topicsListView.getSelectionModel().getSelectedItems();
         
         if (!topicService.validateSelection(selectedTopics)) {
-            showWarning("Selecciona al menos un tema.");
+            showWarning("Por favor selecciona al menos un tema.");
             return;
         }
         
         int temasAgregados = 0;
         List<String> duplicados = new ArrayList<>();
-        
-        // Cargar datos de los tópicos seleccionados
-        List<QuizData> newData = topicService.loadTopics(selectedTopics);
         
         // Procesar cada tema seleccionado
         for (String topicName : selectedTopics) {
@@ -109,6 +117,8 @@ public class MenuController {
                 selectedTopicNames.add(topicName);
                 selectedTopicsObservable.add(topicName);
                 temasAgregados++;
+                // NUEVO: Remover de la lista de disponibles
+                topicsListView.getItems().remove(topicName);
             }
         }
         
@@ -128,6 +138,33 @@ public class MenuController {
         // Limpiar selección del ListView de disponibles
         topicsListView.getSelectionModel().clearSelection();
     }
+    
+    /**
+ * Remueve un solo tema (usado por doble clic)
+ */
+private void removeSingleTopic(String topicName) {
+    if (topicName == null || !selectedTopicNames.contains(topicName)) {
+        return;
+    }
+    
+    // Remover del Set y ListView
+    selectedTopicNames.remove(topicName);
+    selectedTopicsObservable.remove(topicName);
+    
+    // NUEVO: Devolver a la lista de disponibles (en orden alfabético)
+    topicsListView.getItems().add(topicName);
+    topicsListView.getItems().sort(String::compareTo);
+    
+    // Reconstruir selectedQuizData
+    selectedQuizData.clear();
+    if (!selectedTopicNames.isEmpty()) {
+        List<String> remainingTopics = new ArrayList<>(selectedTopicNames);
+        selectedQuizData.addAll(topicService.loadTopics(remainingTopics));
+    }
+    
+    LOGGER.info("Tema removido: " + topicName);
+    updateCountLabel();
+}
     /**
      * Remueve los temas seleccionados de la lista
      */
@@ -149,6 +186,10 @@ public class MenuController {
             // Remover del ListView
             selectedTopicsObservable.remove(topicName);
             
+            // NUEVO: Devolver a la lista de disponibles
+            topicsListView.getItems().add(topicName);
+            // Ordenar alfabéticamente la lista de disponibles
+            topicsListView.getItems().sort(String::compareTo);
         }
         
         // RECONSTRUIR selectedQuizData desde cero con los temas restantes
@@ -160,12 +201,16 @@ public class MenuController {
         
         LOGGER.info("Temas removidos: " + toRemoveCopy.size());
         updateCountLabel();
+        
+        // Limpiar selección
+        topicsSelectedListView.getSelectionModel().clearSelection();
     }
+    
     /**
      * Actualiza el label contador de temas
      */
     private void updateCountLabel() {
-        if (temasCountLabel != null && selectedTopicNames != null) {
+        if (temasCountLabel != null) {
             temasCountLabel.setText("Temas seleccionados: " + selectedTopicNames.size());
         }
     }
@@ -175,8 +220,8 @@ public class MenuController {
      */
     private void startQuiz() {
         if (selectedQuizData.isEmpty()) {
-                showWarning("Por favor, agrega al menos un tema antes de iniciar.");
-                return;
+            showWarning("Por favor, agrega al menos un tema antes de iniciar.");
+            return;
         }
         
         try {
@@ -206,7 +251,7 @@ public class MenuController {
         }
     }
     
-/**
+    /**
      * Muestra un mensaje de advertencia (SIN bloquear con showAndWait)
      */
     private void showWarning(String message) {
@@ -227,5 +272,4 @@ public class MenuController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-    
 }
