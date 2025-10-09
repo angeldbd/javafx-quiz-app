@@ -2,12 +2,14 @@ package org.openjfx.javaquiz.controller;
 
 import org.openjfx.javaquiz.model.QuizData;
 import org.openjfx.javaquiz.service.TopicService;
+import org.openjfx.javaquiz.exception.QuizLoadException;
 import org.openjfx.javaquiz.JavaQuiz;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -67,18 +69,34 @@ public class MenuController {
             if (event.getClickCount() == 2) {
                 String selectedTopic = topicsSelectedListView.getSelectionModel().getSelectedItem();
                 if (selectedTopic != null) {
-                    removeSingleTopic(selectedTopic);
+                    try {
+                        removeSingleTopic(selectedTopic);
+                    } catch (QuizLoadException ex) {
+                        Logger.getLogger(MenuController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
         });
         
         // Configurar eventos de botones
         iniciarBtn.setOnAction(event -> startQuiz());
-        agregarTema.setOnAction(event -> addTopics());
+        agregarTema.setOnAction(event -> {
+            try {
+                addTopics();
+            } catch (QuizLoadException ex) {
+                Logger.getLogger(MenuController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
         
         // Si existe el botón remover, configurarlo
         if (removerTema != null) {
-            removerTema.setOnAction(event -> removeSelectedTopics());
+            removerTema.setOnAction(event -> {
+                try {
+                    removeSelectedTopics();
+                } catch (QuizLoadException ex) {
+                    Logger.getLogger(MenuController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
         }
         
         // Actualizar contador inicial
@@ -90,7 +108,7 @@ public class MenuController {
     /**
      * Agrega los temas seleccionados a la lista SIN ALERT MOLESTO
      */
-    private void addTopics() {
+    private void addTopics() throws QuizLoadException {
         List<String> selectedTopics = topicsListView.getSelectionModel().getSelectedItems();
         
         if (!topicService.validateSelection(selectedTopics)) {
@@ -116,9 +134,11 @@ public class MenuController {
                 selectedQuizData.addAll(topicData);
                 selectedTopicNames.add(topicName);
                 selectedTopicsObservable.add(topicName);
-                temasAgregados++;
+                
                 // NUEVO: Remover de la lista de disponibles
                 topicsListView.getItems().remove(topicName);
+                
+                temasAgregados++;
             }
         }
         
@@ -140,35 +160,36 @@ public class MenuController {
     }
     
     /**
- * Remueve un solo tema (usado por doble clic)
- */
-private void removeSingleTopic(String topicName) {
-    if (topicName == null || !selectedTopicNames.contains(topicName)) {
-        return;
+     * Remueve un solo tema (usado por doble clic)
+     */
+    private void removeSingleTopic(String topicName) throws QuizLoadException {
+        if (topicName == null || !selectedTopicNames.contains(topicName)) {
+            return;
+        }
+        
+        // Remover del Set y ListView
+        selectedTopicNames.remove(topicName);
+        selectedTopicsObservable.remove(topicName);
+        
+        // NUEVO: Devolver a la lista de disponibles (en orden alfabético)
+        topicsListView.getItems().add(topicName);
+        topicsListView.getItems().sort(String::compareTo);
+        
+        // Reconstruir selectedQuizData
+        selectedQuizData.clear();
+        if (!selectedTopicNames.isEmpty()) {
+            List<String> remainingTopics = new ArrayList<>(selectedTopicNames);
+            selectedQuizData.addAll(topicService.loadTopics(remainingTopics));
+        }
+        
+        LOGGER.info("Tema removido: " + topicName);
+        updateCountLabel();
     }
     
-    // Remover del Set y ListView
-    selectedTopicNames.remove(topicName);
-    selectedTopicsObservable.remove(topicName);
-    
-    // NUEVO: Devolver a la lista de disponibles (en orden alfabético)
-    topicsListView.getItems().add(topicName);
-    topicsListView.getItems().sort(String::compareTo);
-    
-    // Reconstruir selectedQuizData
-    selectedQuizData.clear();
-    if (!selectedTopicNames.isEmpty()) {
-        List<String> remainingTopics = new ArrayList<>(selectedTopicNames);
-        selectedQuizData.addAll(topicService.loadTopics(remainingTopics));
-    }
-    
-    LOGGER.info("Tema removido: " + topicName);
-    updateCountLabel();
-}
     /**
      * Remueve los temas seleccionados de la lista
      */
-    private void removeSelectedTopics() {
+    private void removeSelectedTopics() throws QuizLoadException {
         List<String> toRemove = topicsSelectedListView.getSelectionModel().getSelectedItems();
         
         if (toRemove.isEmpty()) {
@@ -188,9 +209,10 @@ private void removeSingleTopic(String topicName) {
             
             // NUEVO: Devolver a la lista de disponibles
             topicsListView.getItems().add(topicName);
-            // Ordenar alfabéticamente la lista de disponibles
-            topicsListView.getItems().sort(String::compareTo);
         }
+        
+        // Ordenar alfabéticamente la lista de disponibles
+        topicsListView.getItems().sort(String::compareTo);
         
         // RECONSTRUIR selectedQuizData desde cero con los temas restantes
         selectedQuizData.clear();

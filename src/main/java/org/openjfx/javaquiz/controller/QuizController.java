@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -26,6 +28,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.fxmisc.richtext.CodeArea;
+import org.openjfx.javaquiz.exception.InvalidQuizDataException;
 
 
 /**
@@ -50,6 +53,9 @@ public class QuizController {
     private QuizService quizService;
     private TimerService timerService;
     
+    // ========== LOGGER ==========
+    private static final Logger logger = Logger.getLogger(QuizController.class.getName());
+    
     // ========== DATOS PARA RESULT ==========
     private List<QuizData> selectedQuizData;
     private String currentTopic;
@@ -60,7 +66,13 @@ public class QuizController {
         this.timerService = new TimerService();
         
         // Configurar callback cuando se acabe el tiempo
-        this.timerService.setOnTimeout(() -> handleTimeout());
+        this.timerService.setOnTimeout(() -> {
+            try {
+                handleTimeout();
+            } catch (InvalidQuizDataException ex) {
+                Logger.getLogger(QuizController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
     }
 
     // ========== INICIALIZACIÓN ==========
@@ -68,7 +80,7 @@ public class QuizController {
     /**
      * Inicializa con un solo QuizData
      */
-    public void setData(QuizData data, String title) {
+    public void setData(QuizData data, String title) throws InvalidQuizDataException {
         this.currentTopic = title;
         this.selectedQuizData = List.of(data);
         quizService.initialize(data.getQuestions());
@@ -78,7 +90,7 @@ public class QuizController {
     /**
      * Inicializa con múltiples QuizData
      */
-    public void setQuizData(List<QuizData> quizDataList) {
+    public void setQuizData(List<QuizData> quizDataList) throws InvalidQuizDataException {
         this.selectedQuizData = quizDataList;
         this.currentTopic = quizDataList.size() == 1 
             ? quizDataList.get(0).getQuestions().get(0).getTopic() 
@@ -90,7 +102,7 @@ public class QuizController {
     /**
      * Inicia el quiz
      */
-    private void startQuiz() {
+    private void startQuiz() throws InvalidQuizDataException {
         setupTimerBindings();
         updateUI();
         timerService.start();
@@ -145,7 +157,11 @@ public class QuizController {
             if (quizService.isFinished()) {
                 showResult();
             } else {
-                updateUI();
+                try {
+                    updateUI();
+                } catch (InvalidQuizDataException ex) {
+                    Logger.getLogger(QuizController.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 timerService.restart();
             }
         });
@@ -169,7 +185,7 @@ public class QuizController {
     /**
      * Maneja cuando se acaba el tiempo
      */
-    private void handleTimeout() {
+    private void handleTimeout() throws InvalidQuizDataException {
         //VALIDACIÓN: Si ya terminó, no hacer nada
         if(quizService.isFinished()){
             return;
@@ -191,29 +207,40 @@ public class QuizController {
     
     @FXML
     private void goNextQuestion() {
+        logger.info("Attempting to go to next question. Current index: " + quizService.getCurrentIndex());
         // VALIDACIÓN: Si estamos en la última pregunta, no avanzar más
         if (quizService.getCurrentIndex() >= quizService.getTotalQuestions() - 1) {
+            logger.warning("No more questions available.");
             return;
         }
         
         // VALIDACION: No permitir avanzar si ya terminó
         if (quizService.isFinished()) {
+            logger.info("Quiz already finished, showing results.");
             showResult();
             return;
         }
         
+        try {
         quizService.goNext();
+        logger.info("Moved to next question. New index: " + quizService.getCurrentIndex());
         
         if (quizService.isFinished()) {
+            logger.info("Quiz finished, showing results.");
             showResult();
         } else {
             updateUI();
             timerService.restart();
+            logger.info("UI updated, timer restarted.");
         }
+    } catch (Exception e) {
+        logger.severe("Error advancing to next question: " + e.getMessage());
+        // TODO: Mostrar mensaje de error en UI
+    }
     }
 
     @FXML
-    private void goPreviousQuestion() {
+    private void goPreviousQuestion() throws InvalidQuizDataException {
         // VALIDACIÓN no retroceder si estamos en la primera pregunta
         if (quizService.getCurrentIndex() == 0){
             return;
@@ -247,7 +274,7 @@ public class QuizController {
     // ========== FUNCIONES AUXILIARES ==========
     
     @FXML
-    private void shuffleQuestions() {
+    private void shuffleQuestions() throws InvalidQuizDataException {
         quizService.shuffle();
         updateUI();
         timerService.restart();
@@ -285,9 +312,18 @@ public class QuizController {
     /**
      * Actualiza toda la interfaz con la pregunta actual
      */
-    private void updateUI() {
+    private void updateUI() throws InvalidQuizDataException {
+        logger.info("Updating UI for question index: " + quizService.getCurrentIndex());
         Question q = quizService.getCurrentQuestion();
-        if (q == null) return;
+        if (q == null){
+            logger.warning("No current question available.");
+            return;
+        }
+        
+        if(q.getX() == null || q.getA() == null){
+            logger.severe("Invalid question data: options or answer is null");
+            throw new InvalidQuizDataException("Current question ", "Missing options or answer");
+        }
         
         // Actualizar pregunta
         question.setText(q.getQ() + " [" + q.getTopic() + "]");
@@ -302,6 +338,12 @@ public class QuizController {
         opt2.setText(options.get(1));
         opt3.setText(options.get(2));
         opt4.setText(options.get(3));
+        
+        // habilitar los botones de manera explicita
+        opt1.setDisable(false);
+        opt2.setDisable(false);
+        opt3.setDisable(false);
+        opt4.setDisable(false);
         
         // Resetear estilos
         resetButtonStyles();
@@ -322,6 +364,11 @@ public class QuizController {
         opt2.setStyle(defaultStyle);
         opt3.setStyle(defaultStyle);
         opt4.setStyle(defaultStyle);
+                // habilitar los botones de manera explicita
+        opt1.setDisable(false);
+        opt2.setDisable(false);
+        opt3.setDisable(false);
+        opt4.setDisable(false);
     }
 
     // ========== MOSTRAR RESULTADO ==========

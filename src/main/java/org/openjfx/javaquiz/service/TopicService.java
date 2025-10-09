@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.logging.Logger;
+import org.openjfx.javaquiz.exception.QuizLoadException;
 
 /**
  * Servicio para manejar la carga de tópicos disponibles
@@ -25,7 +26,8 @@ public class TopicService {
      * Obtiene la lista de tópicos disponibles desde los archivos JSON
      */
     public List<String> getAvailableTopics() {
-        LOGGER.info("Cargando tópicos disponibles...");
+        LOGGER.info("Cargando tópicos disponibles\n" +
+"        LOGGER.info(\"Ca...");
         try {
             URI uri = QuizLoader.class.getResource("/org/openjfx/javaquiz/json/").toURI();
             Path path = Paths.get(uri);
@@ -48,7 +50,7 @@ public class TopicService {
     /**
      * Carga los datos de quiz para una lista de tópicos
      */
-    public List<QuizData> loadTopics(List<String> topicNames) {
+    public List<QuizData> loadTopics(List<String> topicNames) throws QuizLoadException {
         LOGGER.info("Cargando " + topicNames.size() + " tópico(s)");
         
         List<QuizData> quizDataList = new ArrayList<>();

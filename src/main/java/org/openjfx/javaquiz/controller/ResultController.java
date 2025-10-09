@@ -24,6 +24,7 @@ import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.stage.Stage;
+import org.openjfx.javaquiz.exception.InvalidQuizDataException;
 
 /**
  * Controlador para mostrar los resultados del quiz
@@ -178,7 +179,7 @@ public class ResultController {
      * Reinicia el quiz con los mismos temas
      */
     @FXML
-    private void restartQuiz(ActionEvent event) {
+    private void restartQuiz(ActionEvent event) throws InvalidQuizDataException {
         try {
             FXMLLoader loader = new FXMLLoader(
                 JavaQuiz.class.getResource("/org/openjfx/javaquiz/fxml/quiz1.fxml")
