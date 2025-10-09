@@ -140,6 +140,8 @@ public class QuizController {
         PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
         pause.setOnFinished(e -> {
             quizService.goNext();
+            
+            //Verifícar si termino después de avanzar
             if (quizService.isFinished()) {
                 showResult();
             } else {
@@ -168,7 +170,13 @@ public class QuizController {
      * Maneja cuando se acaba el tiempo
      */
     private void handleTimeout() {
+        //VALIDACIÓN: Si ya terminó, no hacer nada
+        if(quizService.isFinished()){
+            return;
+        }
+        // Registrar timeout (cuenta como respuesta incorrecta)
         quizService.registerTimeout();
+        // Avanzar a siguiente pregunta
         quizService.goNext();
         
         if (quizService.isFinished()) {
@@ -183,7 +191,19 @@ public class QuizController {
     
     @FXML
     private void goNextQuestion() {
+        // VALIDACIÓN: Si estamos en la última pregunta, no avanzar más
+        if (quizService.getCurrentIndex() >= quizService.getTotalQuestions() - 1) {
+            return;
+        }
+        
+        // VALIDACION: No permitir avanzar si ya terminó
+        if (quizService.isFinished()) {
+            showResult();
+            return;
+        }
+        
         quizService.goNext();
+        
         if (quizService.isFinished()) {
             showResult();
         } else {
@@ -194,6 +214,10 @@ public class QuizController {
 
     @FXML
     private void goPreviousQuestion() {
+        // VALIDACIÓN no retroceder si estamos en la primera pregunta
+        if (quizService.getCurrentIndex() == 0){
+            return;
+        }
         quizService.goPrevious();
         updateUI();
         timerService.restart();

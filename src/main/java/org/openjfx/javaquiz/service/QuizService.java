@@ -99,14 +99,17 @@ public class QuizService {
                                  * Avanza a la siguiente pregunta
                                  */
                                 public void goNext() {
-                                    currentIndex = (currentIndex + 1) % questions.size();
+                                        currentIndex++;
+                                    
                                 }
 
                                 /**
                                  * Retrocede a la pregunta anterior
                                  */
                                 public void goPrevious() {
-                                    currentIndex = (currentIndex - 1 + questions.size()) % questions.size();
+                                    if( currentIndex > 0){
+                                        currentIndex--;
+                                    }
                                 }
 
                                 /**
@@ -152,6 +155,8 @@ public class QuizService {
                                     if (q != null) {
                                         statsByTopic.putIfAbsent(q.getTopic(), new int[2]);
                                         statsByTopic.get(q.getTopic())[1]++;
+                                        // Marcar como respondida (timeout = pregunta contestada incorrectamente)
+                                        answeredQuestions.add(currentIndex);
                                     }
                           }                              
 }
