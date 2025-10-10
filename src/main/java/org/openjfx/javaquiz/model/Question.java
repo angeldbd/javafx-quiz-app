@@ -13,6 +13,19 @@ public class Question {
     private String topic;
     private String code; // Nuevo campo
     
+    // Constructor existente (sin argumentos)
+    public Question() {
+    }
+
+    // Nuevo constructor para el test
+    public Question(String q, List<String> x, String a, int position, String topic, String code) {
+        this.Q = q;
+        this.X = x;
+        this.A = a;
+        this.topic = topic;
+        this.position  = position;
+        this.code = code;
+    }
     // Getters y setters
     public String getCode() { return code; }
     public void setCode(String code) { this.code = code; }

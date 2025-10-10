@@ -39,7 +39,7 @@ public class QuizService {
      * @param questions Lista de preguntas
      * @throws IllegalArgumentException Si questions es null o vacío
      */
-    public void initialize(List<Question> questions){
+    public void initialize(List<Question> questions) throws InvalidQuizDataException{
         if (questions == null) {
             throw new IllegalArgumentException("La lista de preguntas no puede ser null");
         }
@@ -146,7 +146,7 @@ public class QuizService {
     /**
      * Mezcla las preguntas
      */
-    public void shuffle() {
+    public void shuffle() throws InvalidQuizDataException {
         Collections.shuffle(questions);
         reset();
     }
@@ -154,13 +154,17 @@ public class QuizService {
     /**
      * Reinicia el quiz
      */
-    public void reset() {
-        currentIndex = 0;
-        correctAnswers = 0;
-        wrongAnswers = 0;
-        answeredQuestions.clear();
-        statsByTopic.clear();
+    public void reset() throws InvalidQuizDataException {
+    if (questions == null || questions.isEmpty()) {
+        throw new InvalidQuizDataException("reset", "Quiz not initialized");
     }
+    currentIndex = 0;
+    correctAnswers = 0;
+    wrongAnswers = 0;
+    answeredQuestions.clear();
+    statsByTopic.clear();
+    LOGGER.info("Quiz reset completed");
+}
 
     /**
      * Verifica si el quiz terminó

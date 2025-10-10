@@ -11,7 +11,6 @@ import org.openjfx.javaquiz.model.QuizData;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.openjfx.javaquiz.exception.InvalidQuizDataException;
 
 /**
  * Tests unitarios para QuizService.
@@ -107,7 +106,7 @@ public class QuizServiceTest {
     
     @Test
     @DisplayName("Debe inicializar con múltiples QuizData")
-    void testInitializeMultiple() throws InvalidQuizDataException {
+    void testInitializeMultiple() {
         // ARRANGE
         QuizData data1 = new QuizData();
         data1.setQuestions(Arrays.asList(mockQuestions.get(0), mockQuestions.get(1)));
