@@ -11,6 +11,7 @@ import org.openjfx.javaquiz.model.QuizData;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.openjfx.javaquiz.exception.InvalidQuizDataException;
 
 /**
  * Tests unitarios para QuizService.
@@ -74,7 +75,7 @@ public class QuizServiceTest {
     
     @Test
     @DisplayName("Debe inicializar correctamente con una lista de preguntas")
-    void testInitializeWithQuestions() {
+    void testInitializeWithQuestions() throws InvalidQuizDataException {
         // ARRANGE - Ya tenemos mockQuestions
         
         // ACT
@@ -106,7 +107,7 @@ public class QuizServiceTest {
     
     @Test
     @DisplayName("Debe inicializar con múltiples QuizData")
-    void testInitializeMultiple() {
+    void testInitializeMultiple() throws InvalidQuizDataException {
         // ARRANGE
         QuizData data1 = new QuizData();
         data1.setQuestions(Arrays.asList(mockQuestions.get(0), mockQuestions.get(1)));
@@ -127,7 +128,7 @@ public class QuizServiceTest {
     
     @Test
     @DisplayName("goNext() debe incrementar el índice correctamente")
-    void testGoNextIncreasesIndex() {
+    void testGoNextIncreasesIndex() throws InvalidQuizDataException {
         // ARRANGE
         quizService.initialize(mockQuestions);
         int initialIndex = quizService.getCurrentIndex();
@@ -142,7 +143,7 @@ public class QuizServiceTest {
     
     @Test
     @DisplayName("goNext() debe permitir superar el total de preguntas (para detectar fin)")
-    void testGoNextCanExceedTotal() {
+    void testGoNextCanExceedTotal() throws InvalidQuizDataException {
         // ARRANGE
         quizService.initialize(mockQuestions);
         
@@ -159,7 +160,7 @@ public class QuizServiceTest {
     
     @Test
     @DisplayName("goPrevious() debe decrementar el índice")
-    void testGoPreviousDecreasesIndex() {
+    void testGoPreviousDecreasesIndex() throws InvalidQuizDataException {
         // ARRANGE
         quizService.initialize(mockQuestions);
         quizService.goNext(); // Ir a índice 1
@@ -174,7 +175,7 @@ public class QuizServiceTest {
     
     @Test
     @DisplayName("goPrevious() no debe bajar de 0")
-    void testGoPreviousDoesNotGoBelowZero() {
+    void testGoPreviousDoesNotGoBelowZero() throws InvalidQuizDataException {
         // ARRANGE
         quizService.initialize(mockQuestions);
         
@@ -188,7 +189,7 @@ public class QuizServiceTest {
     
     @Test
     @DisplayName("isFinished() debe retornar true cuando se supera el total")
-    void testIsFinished() {
+    void testIsFinished() throws InvalidQuizDataException {
         // ARRANGE
         quizService.initialize(mockQuestions);
         
@@ -208,7 +209,7 @@ public class QuizServiceTest {
     
     @Test
     @DisplayName("checkAnswer() debe validar respuesta correcta")
-    void testCheckAnswerCorrect() {
+    void testCheckAnswerCorrect() throws InvalidQuizDataException {
         // ARRANGE
         quizService.initialize(mockQuestions);
         Question currentQ = quizService.getCurrentQuestion();
@@ -223,7 +224,7 @@ public class QuizServiceTest {
     
     @Test
     @DisplayName("checkAnswer() debe validar respuesta incorrecta")
-    void testCheckAnswerIncorrect() {
+    void testCheckAnswerIncorrect() throws InvalidQuizDataException {
         // ARRANGE
         quizService.initialize(mockQuestions);
         String incorrectAnswer = "Respuesta incorrecta";
@@ -237,7 +238,7 @@ public class QuizServiceTest {
     
     @Test
     @DisplayName("checkAnswer() debe lanzar excepción con respuesta null")
-    void testCheckAnswerWithNull() {
+    void testCheckAnswerWithNull() throws InvalidQuizDataException {
         // ARRANGE
         quizService.initialize(mockQuestions);
         
@@ -249,7 +250,7 @@ public class QuizServiceTest {
     
     @Test
     @DisplayName("registerAnswer() debe incrementar respuestas correctas")
-    void testRegisterCorrectAnswer() {
+    void testRegisterCorrectAnswer() throws InvalidQuizDataException {
         // ARRANGE
         quizService.initialize(mockQuestions);
         
@@ -263,7 +264,7 @@ public class QuizServiceTest {
     
     @Test
     @DisplayName("registerAnswer() debe incrementar respuestas incorrectas")
-    void testRegisterIncorrectAnswer() {
+    void testRegisterIncorrectAnswer() throws InvalidQuizDataException {
         // ARRANGE
         quizService.initialize(mockQuestions);
         
@@ -277,7 +278,7 @@ public class QuizServiceTest {
     
     @Test
     @DisplayName("registerTimeout() debe incrementar respuestas incorrectas")
-    void testRegisterTimeout() {
+    void testRegisterTimeout() throws InvalidQuizDataException {
         // ARRANGE
         quizService.initialize(mockQuestions);
         
@@ -291,7 +292,7 @@ public class QuizServiceTest {
     
     @Test
     @DisplayName("isCurrentQuestionAnswered() debe detectar preguntas respondidas")
-    void testIsCurrentQuestionAnswered() {
+    void testIsCurrentQuestionAnswered() throws InvalidQuizDataException {
         // ARRANGE
         quizService.initialize(mockQuestions);
         
@@ -311,7 +312,7 @@ public class QuizServiceTest {
     
     @Test
     @DisplayName("Debe rastrear estadísticas por tópico correctamente")
-    void testStatsByTopic() {
+    void testStatsByTopic() throws InvalidQuizDataException {
         // ARRANGE
         quizService.initialize(mockQuestions);
         
@@ -340,7 +341,7 @@ public class QuizServiceTest {
     
     @Test
     @DisplayName("shuffle() debe mezclar preguntas y resetear estado")
-    void testShuffle() {
+    void testShuffle() throws InvalidQuizDataException {
         // ARRANGE
         quizService.initialize(mockQuestions);
         quizService.registerAnswer(true);
@@ -357,7 +358,7 @@ public class QuizServiceTest {
     
     @Test
     @DisplayName("reset() debe limpiar todo el estado del quiz")
-    void testReset() {
+    void testReset() throws InvalidQuizDataException {
         // ARRANGE
         quizService.initialize(mockQuestions);
         quizService.registerAnswer(true);
@@ -380,7 +381,7 @@ public class QuizServiceTest {
     
     @Test
     @DisplayName("Flujo completo de quiz debe funcionar correctamente")
-    void testCompleteQuizFlow() {
+    void testCompleteQuizFlow() throws InvalidQuizDataException {
         // ARRANGE
         quizService.initialize(mockQuestions);
         

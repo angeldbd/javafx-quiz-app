@@ -86,8 +86,18 @@ public class QuizService {
      * Valida si una respuesta es correcta
      */
     public boolean checkAnswer(String answer) {
+// VALIDACIÓN 1: Respuesta no puede ser null (PRIMERO)
+        if (answer == null) {
+            throw new IllegalArgumentException("La respuesta no puede ser null");
+        }
+        
+        // VALIDACIÓN 2: Debe haber pregunta actual
         Question q = getCurrentQuestion();
-        if (q == null) return false;
+        if (q == null) {
+            throw new IllegalStateException("No hay pregunta actual para validar");
+        }
+        
+        // Comparar respuestas
         return answer.equals(q.getA());
     } 
 
