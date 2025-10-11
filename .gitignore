@@ -4,6 +4,7 @@
 *.jar
 *.war
 *.ear
+README.md
 target/
 build/
 out/
