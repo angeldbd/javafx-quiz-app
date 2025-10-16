@@ -298,7 +298,7 @@ Las contribuciones son bienvenidas. Por favor:
 
 ## 👨‍💻 Autor
 
-**Angel** - [GitHub](https://github.com/tuusuario)
+**Angel** - [GitHub](https://github.com/angeldbd)
 
 ---
 
@@ -319,8 +319,8 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 ## 📞 Contacto
 
 Para preguntas o sugerencias:
-- **GitHub Issues**: [Crear Issue](https://github.com/tuusuario/javaquiz/issues)
-- **Email**: tuemail@ejemplo.com
+- **GitHub Issues**: [Crear Issue](https://github.com/angeldbd/javafx-quiz-app/issues)
+- **Email**: angel_latinp@hotmail.com
 
 ---
 
