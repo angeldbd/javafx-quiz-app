@@ -18,14 +18,49 @@ import java.util.stream.Collectors;
 import java.util.logging.Logger;
 
 /**
- * Servicio para manejar la carga de tópicos disponibles
+ * Servicio para cargar y gestionar los tópicos disponibles del quiz.
+ * 
+ * <p>Responsabilidades:
+ * <ul>
+ *   <li>Descubrir tópicos disponibles desde archivos JSON</li>
+ *   <li>Cargar datos de quiz para tópicos específicos</li>
+ *   <li>Validar selecciones de usuario</li>
+ * </ul>
+ * </p>
+ * 
+ * <p><b>Ejemplo de uso:</b></p>
+ * <pre>
+ * TopicService topicService = new TopicService();
+ * 
+ * // Obtener todos los tópicos
+ * List&lt;String&gt; topics = topicService.getAvailableTopics();
+ * 
+ * // Cargar solo los seleccionados
+ * List&lt;String&gt; selected = Arrays.asList("OOP", "Collections");
+ * List&lt;QuizData&gt; quizzes = topicService.loadTopics(selected);
+ * </pre>
+ * 
+ * @author Angel
+ * @version 1.0
+ * @since 1.0
  */
 public class TopicService {
     
     private static final Logger LOGGER = LoggerUtil.getLogger(TopicService.class);
     
     /**
-     * Obtiene la lista de tópicos disponibles desde los archivos JSON
+     * Descubre y retorna todos los tópicos disponibles.
+     * 
+     * <p>Lee la carpeta de recursos buscando archivos JSON en:
+     * {@code /org/openjfx/javaquiz/json/}
+     * 
+     * Los nombres de tópicos corresponden a los nombres de archivos sin extensión.
+     * Los tópicos se retornan en orden alfabético.
+     * </p>
+     * 
+     * @return Lista de nombres de tópicos disponibles (puede estar vacía si hay errores)
+     * 
+     * @see #loadTopics(List)
      */
     public List<String> getAvailableTopics() {
         LOGGER.info("Cargando tópicos disponibles...");
@@ -64,8 +99,20 @@ public class TopicService {
     }
     
     /**
-     * Carga los datos de quiz para una lista de tópicos.
-     * Los tópicos que fallen al cargar se omiten con un warning.
+     * Carga los datos de quiz para una lista de tópicos específicos.
+     * 
+     * <p>Estrategia de carga:
+     * <ul>
+     *   <li>Intenta cargar cada tópico individualmente</li>
+     *   <li>Si falla uno, continúa con los demás (fail-safe)</li>
+     *   <li>Registra warnings para tópicos que fallan</li>
+     * </ul>
+     * </p>
+     * 
+     * @param topicNames Lista de nombres de tópicos a cargar (ej: ["OOP", "Collections"])
+     * @return Lista de {@link QuizData} cargados exitosamente (puede estar vacía)
+     * 
+     * @see #getAvailableTopics()
      */
     public List<QuizData> loadTopics(List<String> topicNames) {
         if (topicNames == null || topicNames.isEmpty()) {
@@ -110,7 +157,17 @@ public class TopicService {
     }
     
     /**
-     * Valida que haya al menos un tópico seleccionado
+     * Valida que la selección de tópicos sea válida.
+     * 
+     * <p>Una selección es válida si:
+     * <ul>
+     *   <li>No es null</li>
+     *   <li>Contiene al menos un elemento</li>
+     * </ul>
+     * </p>
+     * 
+     * @param selectedTopics Lista de tópicos seleccionados
+     * @return true si la selección es válida, false en caso contrario
      */
     public boolean validateSelection(List<String> selectedTopics) {
         return selectedTopics != null && !selectedTopics.isEmpty();
