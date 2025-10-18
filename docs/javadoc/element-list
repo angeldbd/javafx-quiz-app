@@ -1,0 +1,7 @@
+org.openjfx.javaquiz
+org.openjfx.javaquiz.controller
+org.openjfx.javaquiz.exception
+org.openjfx.javaquiz.model
+org.openjfx.javaquiz.repository
+org.openjfx.javaquiz.service
+org.openjfx.javaquiz.util

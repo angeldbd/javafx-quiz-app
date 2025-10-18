@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"org.openjfx.javaquiz"},{"l":"org.openjfx.javaquiz.controller"},{"l":"org.openjfx.javaquiz.exception"},{"l":"org.openjfx.javaquiz.model"},{"l":"org.openjfx.javaquiz.repository"},{"l":"org.openjfx.javaquiz.service"},{"l":"org.openjfx.javaquiz.util"}];updateSearchResults();
