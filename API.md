@@ -699,7 +699,7 @@ label.textProperty().bind(
 
 <div align="center">
 
-**📖 Para más detalles, ver [JavaDoc](target/reports/apidocs/index.html)**
+**📖 Para más detalles, ver [JavaDoc](docs/javadoc/index.html)**
 
 Made with ❤️ by Angel
 
