@@ -5,16 +5,13 @@ import org.openjfx.javaquiz.util.Constants;
 /**
  * Servicio para calcular, evaluar y formatear resultados del quiz.
  * 
- * <p>Responsabilidades:
- * <ul>
- *   <li>Cálculo de puntajes y porcentajes</li>
- *   <li>Generación de mensajes de retroalimentación</li>
- *   <li>Formatting de texto de resultados</li>
- *   <li>Determinación de colores según desempeño</li>
- * </ul>
- * </p>
+ * Responsabilidades:
+ * - Cálculo de puntajes y porcentajes
+ * - Generación de mensajes de retroalimentación
+ * - Formatting de texto de resultados
+ * - Determinación de colores según desempeño
  * 
- * <p><b>Ejemplo de uso:</b></p>
+ * Ejemplo de uso:
  * <pre>
  * ResultService results = new ResultService();
  * 
@@ -24,15 +21,12 @@ import org.openjfx.javaquiz.util.Constants;
  * String color = results.getScoreColor(score);  // "#2ecc71"
  * </pre>
  * 
- * <p><b>Umbrales de puntaje:</b>
- * <ul>
- *   <li>&lt; 50%: Fail</li>
- *   <li>50% - 70%: Low</li>
- *   <li>70% - 90%: Good</li>
- *   <li>90% - 95%: Excellent</li>
- *   <li>≥ 95%: Perfect</li>
- * </ul>
- * </p>
+ * Umbrales de puntaje:
+ * - menor a 50%: Fail
+ * - 50% - 70%: Low
+ * - 70% - 90%: Good
+ * - 90% - 95%: Excellent
+ * - mayor o igual a 95%: Perfect
  * 
  * @author Angel
  * @version 1.0
@@ -44,9 +38,8 @@ public class ResultService {
      /**
      * Calcula el porcentaje de aciertos en el quiz.
      * 
-     * <p>Fórmula: correct / total
+     * Fórmula: correct / total
      * Si total es 0, retorna 0.0 para evitar división por cero.
-     * </p>
      * 
      * @param correct Número de respuestas correctas
      * @param total Número total de preguntas
@@ -64,15 +57,12 @@ public class ResultService {
    /**
      * Genera un mensaje motivacional basado en el puntaje obtenido.
      * 
-     * <p>Los mensajes varían según rangos de desempeño:
-     * <ul>
-     *   <li>&lt; FAIL_THRESHOLD: Motivar a practicar</li>
-     *   <li>FAIL_THRESHOLD - LOW_THRESHOLD: Mejorar conocimiento</li>
-     *   <li>LOW_THRESHOLD - GOOD_THRESHOLD: Mantener práctica</li>
-     *   <li>GOOD_THRESHOLD - EXCELLENT_THRESHOLD: Felicitar por buen desempeño</li>
-     *   <li>&gt; EXCELLENT_THRESHOLD: Reconocer perfección</li>
-     * </ul>
-     * </p>
+     * Los mensajes varían según rangos de desempeño:
+     * - menor a FAIL_THRESHOLD: Motivar a practicar
+     * - FAIL_THRESHOLD - LOW_THRESHOLD: Mejorar conocimiento
+     * - LOW_THRESHOLD - GOOD_THRESHOLD: Mantener práctica
+     * - GOOD_THRESHOLD - EXCELLENT_THRESHOLD: Felicitar por buen desempeño
+     * - mayor a EXCELLENT_THRESHOLD: Reconocer perfección
      * 
      * @param score Puntaje decimal (0.0 a 1.0)
      * @return Mensaje de retroalimentación personalizado
@@ -97,9 +87,8 @@ public class ResultService {
     /**
      * Formatea el texto del puntaje para mostrar al usuario.
      * 
-     * <p>Formato: "{correct}/{total} Marks Score"
+     * Formato: "{correct}/{total} Marks Score"
      * Ejemplo: "18/20 Marks Score"
-     * </p>
      * 
      * @param correct Respuestas correctas
      * @param total Total de preguntas
@@ -112,14 +101,11 @@ public class ResultService {
     /**
      * Obtiene un color hexadecimal basado en el puntaje para UI.
      * 
-     * <p>Estrategia de colores:
-     * <ul>
-     *   <li>&lt; 50%: Rojo (#e74c3c)</li>
-     *   <li>50% - 70%: Naranja (#f39c12)</li>
-     *   <li>70% - 90%: Azul (#3498db)</li>
-     *   <li>≥ 90%: Verde (#2ecc71)</li>
-     * </ul>
-     * </p>
+     * Estrategia de colores:
+     * - menor a 50%: Rojo (#e74c3c)
+     * - 50% - 70%: Naranja (#f39c12)
+     * - 70% - 90%: Azul (#3498db)
+     * - mayor o igual a 90%: Verde (#2ecc71)
      * 
      * @param score Puntaje decimal (0.0 a 1.0)
      * @return Código hexadecimal de color (sin #)

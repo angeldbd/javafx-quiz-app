@@ -20,15 +20,12 @@ import java.util.logging.Logger;
 /**
  * Servicio para cargar y gestionar los tópicos disponibles del quiz.
  * 
- * <p>Responsabilidades:
- * <ul>
- *   <li>Descubrir tópicos disponibles desde archivos JSON</li>
- *   <li>Cargar datos de quiz para tópicos específicos</li>
- *   <li>Validar selecciones de usuario</li>
- * </ul>
- * </p>
+ * Responsabilidades:
+ * - Descubrir tópicos disponibles desde archivos JSON
+ * - Cargar datos de quiz para tópicos específicos
+ * - Validar selecciones de usuario
  * 
- * <p><b>Ejemplo de uso:</b></p>
+ * Ejemplo de uso:
  * <pre>
  * TopicService topicService = new TopicService();
  * 
@@ -51,12 +48,11 @@ public class TopicService {
     /**
      * Descubre y retorna todos los tópicos disponibles.
      * 
-     * <p>Lee la carpeta de recursos buscando archivos JSON en:
-     * {@code /org/openjfx/javaquiz/json/}
+     * Lee la carpeta de recursos buscando archivos JSON en:
+     * /org/openjfx/javaquiz/json/
      * 
      * Los nombres de tópicos corresponden a los nombres de archivos sin extensión.
      * Los tópicos se retornan en orden alfabético.
-     * </p>
      * 
      * @return Lista de nombres de tópicos disponibles (puede estar vacía si hay errores)
      * 
@@ -101,13 +97,10 @@ public class TopicService {
     /**
      * Carga los datos de quiz para una lista de tópicos específicos.
      * 
-     * <p>Estrategia de carga:
-     * <ul>
-     *   <li>Intenta cargar cada tópico individualmente</li>
-     *   <li>Si falla uno, continúa con los demás (fail-safe)</li>
-     *   <li>Registra warnings para tópicos que fallan</li>
-     * </ul>
-     * </p>
+     * Estrategia de carga:
+     * - Intenta cargar cada tópico individualmente
+     * - Si falla uno, continúa con los demás (fail-safe)
+     * - Registra warnings para tópicos que fallan
      * 
      * @param topicNames Lista de nombres de tópicos a cargar (ej: ["OOP", "Collections"])
      * @return Lista de {@link QuizData} cargados exitosamente (puede estar vacía)
@@ -159,12 +152,9 @@ public class TopicService {
     /**
      * Valida que la selección de tópicos sea válida.
      * 
-     * <p>Una selección es válida si:
-     * <ul>
-     *   <li>No es null</li>
-     *   <li>Contiene al menos un elemento</li>
-     * </ul>
-     * </p>
+     * Una selección es válida si:
+     * - No es null
+     * - Contiene al menos un elemento
      * 
      * @param selectedTopics Lista de tópicos seleccionados
      * @return true si la selección es válida, false en caso contrario

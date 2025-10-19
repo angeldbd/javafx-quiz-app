@@ -10,17 +10,14 @@ import org.openjfx.javaquiz.exception.InvalidQuizDataException;
 /**
  * Servicio central que gestiona toda la lógica del quiz.
  * 
- * <p>Responsabilidades principales:
- * <ul>
- *   <li>Inicialización y flujo del quiz</li>
- *   <li>Validación de respuestas del usuario</li>
- *   <li>Cálculo de estadísticas por tópico</li>
- *   <li>Navegación entre preguntas</li>
- *   <li>Gestión de timeouts</li>
- * </ul>
- * </p>
- * 
- * <p><b>Ejemplo de uso:</b></p>
+ * Responsabilidades principales:
+ * - Inicialización y flujo del quiz
+ * - Validación de respuestas del usuario
+ * - Cálculo de estadísticas por tópico
+ * - Navegación entre preguntas
+ * - Gestión de timeouts
+
+ * Ejemplo de uso:
  * <pre>
  * QuizService quiz = new QuizService();
  * quiz.initialize(questions);
@@ -67,12 +64,9 @@ public class QuizService {
 /**
      * Inicializa el quiz con una lista de preguntas.
      * 
-     * <p>Validaciones:
-     * <ul>
-     *   <li>La lista no puede ser null</li>
-     *   <li>La lista no puede estar vacía</li>
-     * </ul>
-     * </p>
+     * Validaciones:
+     * - La lista no puede ser null
+     * - La lista no puede estar vacía
      * 
      * @param questions Lista de objetos {@link Question} a responder
      * @throws IllegalArgumentException si questions es null o vacío
@@ -96,9 +90,8 @@ public class QuizService {
 /**
      * Inicializa el quiz con múltiples fuentes de datos (diferentes tópicos).
      * 
-     * <p>Combine preguntas de varios temas {@link QuizData} en una sola sesión de quiz.
+     * Combina preguntas de varios QuizData en una sola sesión.
      * Los datos inválidos lanzan excepción inmediatamente.
-     * </p>
      * 
      * @param quizDataList Lista de {@link QuizData} con preguntas de diferentes tópicos
      * @throws InvalidQuizDataException si la lista es null, vacía o contiene datos inválidos
@@ -121,12 +114,9 @@ public class QuizService {
     /**
      * Obtiene la pregunta actualmente mostrada al usuario.
      * 
-     * <p>Retorna null si:
-     * <ul>
-     *   <li>El índice actual es negativo</li>
-     *   <li>El índice actual supera el número total de preguntas</li>
-     * </ul>
-     * </p>
+     * Retorna null si:
+     * - El índice actual es negativo
+     * - El índice actual supera el número total de preguntas
      * 
      * @return La pregunta actual o null si no hay pregunta válida
      */
@@ -140,9 +130,8 @@ public class QuizService {
     /**
      * Valida si la respuesta proporcionada es correcta.
      * 
-     * <p>Compara la respuesta del usuario con la respuesta correcta de la pregunta actual.
+     * Compara la respuesta del usuario con la respuesta correcta de la pregunta actual.
      * Las comparaciones son sensibles a mayúsculas/minúsculas.
-     * </p>
      * 
      * @param answer La respuesta del usuario
      * @return true si la respuesta es correcta, false en caso contrario
@@ -168,13 +157,10 @@ public class QuizService {
     /**
      * Registra la respuesta del usuario (correcta o incorrecta).
      * 
-     * <p>Actualiza:
-     * <ul>
-     *   <li>Contadores globales (correctas/incorrectas)</li>
-     *   <li>Estadísticas por tópico</li>
-     *   <li>Marca la pregunta como respondida</li>
-     * </ul>
-     * </p>
+     * Actualiza:
+     * - Contadores globales (correctas/incorrectas)
+     * - Estadísticas por tópico
+     * - Marca la pregunta como respondida
      * 
      * @param isCorrect true si la respuesta fue correcta, false si fue incorrecta
      */
@@ -214,8 +200,7 @@ public class QuizService {
     /**
      * Avanza a la siguiente pregunta sin validar límites.
      * 
-     * <p><b>Nota:</b> Usar {@link #isFinished()} para verificar si se llegó al final.
-     * </p>
+     * Nota: Usar isFinished() para verificar si se llegó al final.
      */
     public void goNext() {
         currentIndex++;
@@ -246,14 +231,11 @@ public class QuizService {
     /**
      * Reinicia el quiz a su estado inicial.
      * 
-     * <p>Resetea:
-     * <ul>
-     *   <li>Índice actual a 0</li>
-     *   <li>Contadores de respuestas</li>
-     *   <li>Respuestas registradas</li>
-     *   <li>Estadísticas por tópico</li>
-     * </ul>
-     * </p>
+     * Resetea:
+     * - Índice actual a 0
+     * - Contadores de respuestas
+     * - Respuestas registradas
+     * - Estadísticas por tópico
      * 
      * @throws InvalidQuizDataException si el quiz no está inicializado
      */
@@ -272,8 +254,7 @@ public class QuizService {
     /**
      * Verifica si el quiz ha finalizado.
      * 
-     * <p>El quiz termina cuando currentIndex es mayor o igual al número total de preguntas.
-     * </p>
+     * El quiz termina cuando currentIndex es mayor o igual al número total de preguntas.
      * 
      * @return true si no hay más preguntas por responder, false en caso contrario
      */
@@ -281,6 +262,24 @@ public class QuizService {
         return currentIndex >= questions.size();
     }
 
+        /**
+     * Registra un timeout (pregunta no contestada a tiempo).
+     * 
+     * Incrementa:
+     * - Contador de respuestas incorrectas
+     * - Estadísticas de incorrectas del tópico actual
+     */
+    public void registerTimeout() {
+        wrongAnswers++;
+        Question q = getCurrentQuestion();
+        if (q != null) {
+            statsByTopic.putIfAbsent(q.getTopic(), new int[2]);
+            statsByTopic.get(q.getTopic())[1]++;
+            // Marcar como respondida (timeout = pregunta contestada incorrectamente)
+            answeredQuestions.add(currentIndex);
+        }
+    }
+    
     // Getters
     /**
      * Obtiene el índice de la pregunta actual.
@@ -327,24 +326,4 @@ public class QuizService {
      */
     public List<Question> getQuestions() { return questions; }
 
-    /**
-     * Registra un timeout (pregunta no contestada a tiempo).
-     * 
-     * <p>Incrementa:
-     * <ul>
-     *   <li>Contador de respuestas incorrectas</li>
-     *   <li>Estadísticas de incorrectas del tópico actual</li>
-     * </ul>
-     * </p>
-     */
-    public void registerTimeout() {
-        wrongAnswers++;
-        Question q = getCurrentQuestion();
-        if (q != null) {
-            statsByTopic.putIfAbsent(q.getTopic(), new int[2]);
-            statsByTopic.get(q.getTopic())[1]++;
-            // Marcar como respondida (timeout = pregunta contestada incorrectamente)
-            answeredQuestions.add(currentIndex);
-        }
-    }
 }

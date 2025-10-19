@@ -12,16 +12,13 @@ import org.openjfx.javaquiz.util.Constants;
 /**
  * Servicio que gestiona el temporizador del quiz.
  * 
- * <p>Características:
- * <ul>
- *   <li>Countdown configurable (segundos)</li>
- *   <li>Callback personalizable al terminar tiempo</li>
- *   <li>Propiedades JavaFX para binding con UI</li>
- *   <li>Cambio automático de color según tiempo restante</li>
- * </ul>
- * </p>
+ * Características:
+ * - Countdown configurable (segundos)
+ * - Callback personalizable al terminar tiempo
+ * - Propiedades JavaFX para binding con UI
+ * - Cambio automático de color según tiempo restante
  * 
- * <p><b>Ejemplo de uso:</b></p>
+ * Ejemplo de uso:
  * <pre>
  * TimerService timer = new TimerService();
  * 
@@ -58,12 +55,9 @@ public class TimerService {
                     /**
             * Constructor que inicializa el servicio de temporizador.
             * 
-            * <p>Valores iniciales:
-            * <ul>
-            *   <li>Segundos: MAX_SECONDS</li>
-            *   <li>Progreso: 1.0 (100%)</li>
-            * </ul>
-            * </p>
+            * Valores iniciales:
+            * - Segundos: MAX_SECONDS
+            * - Progreso: 1.0 (100%)
             */
 
                 public TimerService() {
@@ -74,9 +68,8 @@ public class TimerService {
                     /**
             * Inicia el temporizador desde el máximo de segundos.
             * 
-            * <p>Si hay un temporizador corriendo, lo detiene primero (thread-safe).
+            * Si hay un temporizador corriendo, lo detiene primero (thread-safe).
             * El progreso decrece linealmente de 1.0 a 0.0.
-            * </p>
             */
                     public void start() {
                         stop(); // Detener timer anterior si existe
@@ -110,8 +103,7 @@ public class TimerService {
                         /**
             * Detiene el temporizador sin reiniciarlo.
             * 
-            * <p>Seguro llamar múltiples veces o si no hay timer corriendo.
-            * </p>
+            * Seguro llamar múltiples veces o si no hay timer corriendo.
             */
                     public void stop() {
                         if (timeline != null) {
@@ -122,8 +114,7 @@ public class TimerService {
                     /**
             * Reinicia el temporizador desde cero.
             * 
-            * <p>Equivale a llamar {@link #stop()} seguido de {@link #start()}.
-            * </p>
+            * Equivale a llamar stop() seguido de start().
             */
                     public void restart() {
                         start();
@@ -159,8 +150,7 @@ public class TimerService {
                     /**
             * Property JavaFX para binding: segundos restantes.
             * 
-            * <p>Útil para vincular a Labels o TextFields.
-            * </p>
+            * Útil para vincular a Labels o TextFields.
             * 
             * @return IntegerProperty con los segundos
             */
@@ -171,9 +161,8 @@ public class TimerService {
                     /**
             * Property JavaFX para binding: progreso del timer.
             * 
-            * <p>Útil para vincular a ProgressBar.
+            * Útil para vincular a ProgressBar.
             * Rango: 0.0 a 1.0
-            * </p>
             * 
             * @return DoubleProperty con el progreso (0.0-1.0)
             */
@@ -184,13 +173,10 @@ public class TimerService {
                    /**
             * Obtiene el color CSS según el tiempo restante.
             * 
-            * <p>Estrategia de colores:
-            * <ul>
-            *   <li>Verde: &gt; 50%</li>
-            *   <li>Naranja: entre 50% y 25%</li>
-            *   <li>Rojo: &lt; 25%</li>
-            * </ul>
-            * </p>
+            * Estrategia de colores:
+            * - Verde: mayor a 50%
+            * - Naranja: entre 50% y 25%
+            * - Rojo: menor a 25%
             * 
             * @return String con CSS válido (ej: "-fx-accent: green;")
             */
