@@ -248,7 +248,7 @@ public class MenuController {
         
         try {
             FXMLLoader loader = new FXMLLoader(
-                JavaQuiz.class.getResource("/org/openjfx/javaquiz/fxml/quiz1.fxml")
+                JavaQuiz.class.getResource("/org/openjfx/javaquiz/fxml/quiz.fxml")
             );
             Scene scene = new Scene(loader.load());
             
@@ -268,6 +268,7 @@ public class MenuController {
             current.close();
             
         } catch (Exception e) {
+            e.printStackTrace();
             LOGGER.severe("Error iniciando quiz: " + e.getMessage());
             showError("No se pudo iniciar el quiz: " + e.getMessage());
         }
