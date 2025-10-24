@@ -6,29 +6,452 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     Created on : 06-09-2025, 2:26:41 p. m.
     Author     : angel
 */
+/*
+========================================================
+*JAVAQUIZ - DESIGN SYSTEM PROFESIONAL
+*Tech Edication Theme - Azul/Morado Moderno
+*=======================================================
+*/
+
+/*============== VARIABLES CSS =======================*/
+/* Esto es Crítico: Define colores una vez, usa en todos lados */
+
+.root{
+    /* Colores Primarios */
+    -fx-primary: #5B4FFF;           /* Azul eléctrico */
+    -fx-primary-dark: #4338CA;      /* Azul oscuro */
+    -fx-primary-light: #818CF8;     /* Azul claro */
+    
+    /* Colores Secundarios */
+    -fx-secondary: #7C3AED;         /* Morado */
+    -fx-secondary-dark: #6D28D9;    /* Morado oscuro */
+    -fx-secondary-light: #A78BFA;   /* Morado claro */
+    
+    /* Colores de Acento */
+    -fx-accent: #06B6D4;            /* Cyan */
+    -fx-accent-hover: #0891B2;      /* Cyan hover */
+    
+    /* Colores Semánticos */
+    -fx-success: #10B981;           /* Verde correcto */
+    -fx-success-bg: #D1FAE5;        /* Verde fondo */
+    -fx-error: #EF4444;             /* Rojo error */
+    -fx-error-bg: #FEE2E2;          /* Rojo fondo */
+    -fx-warning: #F59E0B;           /* Naranja advertencia */
+    
+    /* Colores de Fondo */
+    -fx-bg-primary: #FFFFFF;        /* Blanco principal */
+    -fx-bg-secondary: #F8FAFC;      /* Gris muy claro */
+    -fx-bg-tertiary: #E2E8F0;       /* Gris claro */
+    
+    /* Colores de Texto */
+    -fx-text-primary: #0F172A;      /* Texto principal */
+    -fx-text-secondary: #475569;    /* Texto secundario */
+    -fx-text-tertiary: #94A3B8;     /* Texto terciario */
+    
+    /* Sombras */
+    -fx-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    -fx-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    -fx-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    -fx-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    
+    /* Bordes Redondeados */
+    -fx-radius-sm: 8px;
+    -fx-radius-md: 12px;
+    -fx-radius-lg: 16px;
+    -fx-radius-xl: 24px;
+    -fx-radius-full: 32px;
+    
+    /* Espaciado */
+    -fx-spacing-xs: 4px;
+    -fx-spacing-sm: 8px;
+    -fx-spacing-md: 16px;
+    -fx-spacing-lg: 24px;
+    -fx-spacing-xl: 32px;
+    -fx-spacing-2xl: 48px;
+    
+    /* Tipografía */
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -fx-font-size-xs: 12px;
+    -fx-font-size-sm: 14px;
+    -fx-font-size-md: 16px;
+    -fx-font-size-lg: 18px;
+    -fx-font-size-xl: 21px;
+    -fx-font-size-2xl: 24px;
+    -fx-font-size-3xl: 30px;
+}
+
+/* ==================== BOTONES PRINCIPALES ==================== */
+
+/* Botón Primary - Para acciones principales */
+.btn-primary {
+    -fx-background-color: linear-gradient(135deg, -fx-primary 0%, -fx-secondary 100%);
+    -fx-text-fill: white;
+    -fx-font-family: -fx-font-family;
+    -fx-font-size: -fx-font-size-lg;
+    -fx-font-weight: 600;
+    -fx-background-radius: -fx-radius-md;
+    -fx-border-radius: -fx-radius-md;
+    -fx-padding: 16px 32px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(91, 79, 255, 0.3), 8, 0.3, 0, 4);
+}
+
+.btn-primary:hover {
+    -fx-background-color: linear-gradient(135deg, -fx-primary-dark 0%, -fx-secondary-dark 100%);
+    -fx-effect: dropshadow(gaussian, rgba(91, 79, 255, 0.5), 12, 0.4, 0, 6);
+    -fx-scale-y: 1.02;
+    -fx-scale-x: 1.02;
+}
+
+.btn-primary:pressed {
+    -fx-background-color: -fx-primary-dark;
+    -fx-effect: dropshadow(gaussian, rgba(91, 79, 255, 0.2), 4, 0.2, 0, 2);
+    -fx-scale-y: 0.98;
+    -fx-scale-x: 0.98;
+}
+
+
+/* ==================== BOTONES DE OPCIONES (QUIZ) ==================== */
+
+/* Botón de opción normal */
+.option-button {
+    -fx-background-color: white;
+    -fx-border-color: -fx-bg-tertiary;
+    -fx-border-width: 2px;
+    -fx-border-radius: -fx-radius-md;
+    -fx-background-radius: -fx-radius-md;
+    -fx-text-fill: -fx-text-primary;
+    -fx-font-size: -fx-font-size-md;
+    -fx-font-weight: 500;
+    -fx-padding: 20px 24px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 4, 0.1, 0, 2);
+}
+
+.option-button:hover {
+    -fx-background-color: -fx-bg-secondary;
+    -fx-border-color: -fx-primary;
+    -fx-effect: dropshadow(gaussian, rgba(91, 79, 255, 0.15), 8, 0.2, 0, 4);
+    -fx-scale-y: 1.01;
+}
+
+.option-button:pressed {
+    -fx-background-color: -fx-bg-tertiary;
+    -fx-scale-y: 0.99;
+}
+
+/* Opción seleccionada */
+.option-selected {
+    -fx-background-color: linear-gradient(135deg, rgba(91, 79, 255, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
+    -fx-border-color: -fx-primary;
+    -fx-border-width: 2px;
+    -fx-text-fill: -fx-primary;
+}
+
+/* Opción correcta (después de responder) */
+.option-correct {
+    -fx-background-color: -fx-success-bg;
+    -fx-border-color: -fx-success;
+    -fx-border-width: 2px;
+    -fx-text-fill: -fx-success;
+}
+
+/* Opción incorrecta (después de responder) */
+.option-wrong {
+    -fx-background-color: -fx-error-bg;
+    -fx-border-color: -fx-error;
+    -fx-border-width: 2px;
+    -fx-text-fill: -fx-error;
+}
+
+
+/* ==================== BOTONES SECUNDARIOS ==================== */
+
+.btn-secondary {
+    -fx-background-color: white;
+    -fx-border-color: -fx-primary;
+    -fx-border-width: 2px;
+    -fx-border-radius: -fx-radius-sm;
+    -fx-background-radius: -fx-radius-sm;
+    -fx-text-fill: -fx-primary;
+    -fx-font-size: -fx-font-size-md;
+    -fx-font-weight: 600;
+    -fx-padding: 12px 24px;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: -fx-primary;
+    -fx-text-fill: white;
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: -fx-primary-dark;
+}
+
+
+/* ==================== BOTONES DE NAVEGACIÓN ==================== */
+
+.btn-nav {
+    -fx-background-color: -fx-bg-secondary;
+    -fx-text-fill: -fx-text-primary;
+    -fx-font-size: -fx-font-size-sm;
+    -fx-font-weight: 500;
+    -fx-background-radius: -fx-radius-sm;
+    -fx-border-radius: -fx-radius-sm;
+    -fx-padding: 10px 20px;
+    -fx-cursor: hand;
+}
+
+.btn-nav:hover {
+    -fx-background-color: -fx-bg-tertiary;
+}
+
+.btn-nav:pressed {
+    -fx-background-color: -fx-primary;
+    -fx-text-fill: white;
+}
+
+
+/* ==================== LABELS Y TEXTO ==================== */
+
+.title-large {
+    -fx-font-size: -fx-font-size-3xl;
+    -fx-font-weight: 700;
+    -fx-text-fill: -fx-text-primary;
+}
+
+.title-medium {
+    -fx-font-size: -fx-font-size-2xl;
+    -fx-font-weight: 600;
+    -fx-text-fill: -fx-text-primary;
+}
+
+.text-body {
+    -fx-font-size: -fx-font-size-md;
+    -fx-font-weight: 400;
+    -fx-text-fill: -fx-text-secondary;
+}
+
+.text-small {
+    -fx-font-size: -fx-font-size-sm;
+    -fx-font-weight: 400;
+    -fx-text-fill: -fx-text-tertiary;
+}
+
+
+/* ==================== PROGRESS BAR (TIMER) ==================== */
+
+.progress-bar {
+    -fx-background-color: -fx-bg-tertiary;
+    -fx-background-radius: -fx-radius-full;
+    -fx-padding: 4px;
+}
+
+.progress-bar > .track {
+    -fx-background-color: -fx-bg-tertiary;
+    -fx-background-radius: -fx-radius-full;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: linear-gradient(to right, -fx-primary, -fx-accent);
+    -fx-background-radius: -fx-radius-full;
+    -fx-padding: 4px;
+}
+
+
+/* ==================== PROGRESS INDICATOR (RESULTADOS) ==================== */
+
+.progress-indicator {
+    -fx-progress-color: -fx-primary;
+    -fx-background-radius: 100%;
+}
+
+/* Indicador verde (correctas) */
+.progress-correct {
+    -fx-progress-color: -fx-success;
+    -fx-background-color: -fx-success-bg;
+}
+
+/* Indicador rojo (incorrectas) */
+.progress-wrong {
+    -fx-progress-color: -fx-error;
+    -fx-background-color: -fx-error-bg;
+}
+
+
+/* ==================== TREE TABLE (RESULTADOS) ==================== */
+
+.tree-table-view {
+    -fx-background-color: white;
+    -fx-border-color: -fx-bg-tertiary;
+    -fx-border-width: 1px;
+    -fx-border-radius: -fx-radius-md;
+    -fx-background-radius: -fx-radius-md;
+}
 
 .tree-table-row-cell {
     -fx-background-color: white;
+    -fx-border-color: transparent;
+}
+
+.tree-table-row-cell:filled:hover {
+    -fx-background-color: -fx-bg-secondary;
 }
 
 .tree-table-row-cell:filled:selected {
-    -fx-background-color: #4285F4; /* Azul selección */
-    -fx-text-fill: white;
+    -fx-background-color: rgba(91, 79, 255, 0.1);
+    -fx-text-fill: -fx-primary;
 }
 
 .tree-table-cell {
     -fx-alignment: CENTER;
+    -fx-font-size: -fx-font-size-sm;
+    -fx-padding: 8px;
 }
 
-/* Verde para correctas */
+.column-header {
+    -fx-background-color: -fx-bg-secondary;
+    -fx-font-weight: 600;
+    -fx-font-size: -fx-font-size-sm;
+    -fx-text-fill: -fx-text-primary;
+}
+
+/* Estilos para las celdas de correctas/incorrectas */
 .correct-cell {
-    -fx-text-fill: green;
+    -fx-text-fill: -fx-success;
     -fx-font-weight: bold;
 }
 
-/* Rojo para incorrectas */
 .wrong-cell {
-    -fx-text-fill: red;
+    -fx-text-fill: -fx-error;
     -fx-font-weight: bold;
 }
-.keyword { -fx-fill: purple; -fx-font-weight: bold; }
+
+
+/* ==================== LIST VIEW (MENÚ) ==================== */
+
+.list-view {
+    -fx-background-color: white;
+    -fx-border-color: -fx-bg-tertiary;
+    -fx-border-width: 1px;
+    -fx-border-radius: -fx-radius-md;
+    -fx-background-radius: -fx-radius-md;
+}
+
+.list-cell {
+    -fx-background-color: white;
+    -fx-text-fill: -fx-text-primary;
+    -fx-font-size: -fx-font-size-md;
+    -fx-padding: 12px 16px;
+}
+
+.list-cell:hover {
+    -fx-background-color: -fx-bg-secondary;
+}
+
+.list-cell:selected {
+    -fx-background-color: rgba(91, 79, 255, 0.15);
+    -fx-text-fill: -fx-primary;
+    -fx-font-weight: 600;
+}
+
+
+/* ==================== SCROLL PANE (CÓDIGO) ==================== */
+
+.scroll-pane {
+    -fx-background-color: white;
+    -fx-border-color: -fx-bg-tertiary;
+    -fx-border-width: 1px;
+    -fx-border-radius: -fx-radius-md;
+    -fx-background-radius: -fx-radius-md;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: white;
+}
+
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: -fx-bg-tertiary;
+    -fx-background-radius: -fx-radius-sm;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: -fx-primary-light;
+}
+
+
+/* ==================== BAR CHART (RESULTADOS) ==================== */
+
+.chart {
+    -fx-background-color: white;
+    -fx-border-color: -fx-bg-tertiary;
+    -fx-border-width: 1px;
+    -fx-border-radius: -fx-radius-md;
+    -fx-background-radius: -fx-radius-md;
+    -fx-padding: 16px;
+}
+
+.chart-title {
+    -fx-font-size: -fx-font-size-xl;
+    -fx-font-weight: 600;
+    -fx-text-fill: -fx-text-primary;
+}
+
+.chart-legend {
+    -fx-background-color: transparent;
+    -fx-padding: 8px;
+}
+
+.axis {
+    -fx-tick-label-fill: -fx-text-secondary;
+    -fx-font-size: -fx-font-size-sm;
+}
+
+.axis-label {
+    -fx-text-fill: -fx-text-primary;
+    -fx-font-weight: 600;
+}
+
+/* Colores de las barras - Series */
+.default-color0.chart-bar { -fx-bar-fill: -fx-success; }
+.default-color1.chart-bar { -fx-bar-fill: -fx-error; }
+
+
+/* ==================== ANCHOR PANE (CONTENEDORES) ==================== */
+
+.container-main {
+    -fx-background-color: white;
+    -fx-background-radius: -fx-radius-full;
+    -fx-border-radius: -fx-radius-full;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 20, 0.2, 0, 10);
+}
+
+
+/* ==================== CÓDIGO SYNTAX HIGHLIGHTING ==================== */
+
+.keyword { 
+    -fx-fill: #7C3AED;  /* Morado para keywords */
+    -fx-font-weight: bold; 
+}
+
+.code-area { 
+    -fx-padding: 16px;
+    -fx-font-family: "Consolas", "Monaco", "Courier New", monospace;
+    -fx-font-size: 14px;
+    -fx-background-color: -fx-bg-secondary;
+    -fx-text-fill: -fx-text-primary;
+}
+
+
+/* ==================== ANIMACIONES Y TRANSICIONES ==================== */
+
+/* Esto hará que los botones tengan transiciones suaves */
+.button {
+    -fx-transition: all 0.3s ease;
+}
