@@ -268,7 +268,6 @@ public class MenuController {
             current.close();
             
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.severe("Error iniciando quiz: " + e.getMessage());
             showError("No se pudo iniciar el quiz: " + e.getMessage());
         }
