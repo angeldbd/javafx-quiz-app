@@ -44,8 +44,24 @@ public class HomeController {
         // Aplicar clip para forzar esquinas redondeadas
         applyRoundedCorners();
         
+        // Aplicar estilo del botón (ahora desde CSS, no inline)
+        applyButtonStyle();
+        
         // Configurar acción del botón
         playquizbtn.setOnAction(this::handlePlayButton);
+    }
+    
+    /**
+     * Aplica el estilo del botón desde CSS.
+     * El CSS ahora usa colores directos en lugar de variables.
+     */
+    private void applyButtonStyle() {
+        if (playquizbtn != null) {
+            // Aplicar la clase CSS
+            playquizbtn.getStyleClass().add("btn-primary");
+            
+            LOGGER.info("Clase CSS 'btn-primary' aplicada al botón");
+        }
     }
     
     /**
