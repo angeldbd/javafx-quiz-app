@@ -173,24 +173,26 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
 
 .btn-secondary {
     -fx-background-color: white;
-    -fx-border-color: -fx-primary;
+    -fx-border-color: #5B4FFF;
     -fx-border-width: 2px;
-    -fx-border-radius: -fx-radius-sm;
-    -fx-background-radius: -fx-radius-sm;
-    -fx-text-fill: -fx-primary;
-    -fx-font-size: -fx-font-size-md;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-text-fill: #5B4FFF;
+    -fx-font-size: 14px;
     -fx-font-weight: 600;
-    -fx-padding: 12px 24px;
+    -fx-padding: 10px 20px;
     -fx-cursor: hand;
 }
 
 .btn-secondary:hover {
-    -fx-background-color: -fx-primary;
+    -fx-background-color: #5B4FFF;
     -fx-text-fill: white;
+    -fx-border-color: #5B4FFF;
 }
 
 .btn-secondary:pressed {
-    -fx-background-color: -fx-primary-dark;
+    -fx-background-color: #4338CA;
+    -fx-border-color: #4338CA;
 }
 
 

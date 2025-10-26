@@ -4,6 +4,7 @@ import org.openjfx.javaquiz.model.QuizData;
 import org.openjfx.javaquiz.service.TopicService;
 import org.openjfx.javaquiz.exception.QuizLoadException;
 import org.openjfx.javaquiz.JavaQuiz;
+import org.openjfx.javaquiz.util.LoggerUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -21,14 +23,19 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.openjfx.javaquiz.util.LoggerUtil;
 
 /**
- * Controlador para la selección de temas del quiz
- * REFACTORIZADO: Ahora muestra temas seleccionados en ListView sin alerts molestos
+ * Controlador para la selección de temas del quiz.
+ * Versión refactorizada con diseño profesional.
+ * 
+ * @author angel
+ * @version 2.0
+ * @since 2025-01-24
  */
 public class MenuController {
 
@@ -38,10 +45,11 @@ public class MenuController {
     @FXML private Label temasCountLabel;
     @FXML private ListView<String> topicsListView;
     @FXML private ListView<String> topicsSelectedListView;
+    @FXML private AnchorPane rootPane;
     
     private TopicService topicService;
     private List<QuizData> selectedQuizData;
-    private Set<String> selectedTopicNames; // Para prevenir duplicados
+    private Set<String> selectedTopicNames;
     private ObservableList<String> selectedTopicsObservable;
     
     private static final Logger LOGGER = LoggerUtil.getLogger(MenuController.class);
@@ -49,12 +57,17 @@ public class MenuController {
     public MenuController() {
         this.topicService = new TopicService();
         this.selectedQuizData = new ArrayList<>();
-        this.selectedTopicNames = new HashSet<>(); // INICIALIZAR el Set
-        this.selectedTopicsObservable = FXCollections.observableArrayList(); // INICIALIZAR la lista observable
+        this.selectedTopicNames = new HashSet<>();
+        this.selectedTopicsObservable = FXCollections.observableArrayList();
     }
     
     @FXML
     private void initialize() {
+        LOGGER.info("Inicializando MenuController");
+        
+        // Aplicar esquinas redondeadas
+        applyRoundedCorners();
+        
         // Configurar ListView de temas disponibles
         topicsListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         List<String> availableTopics = topicService.getAvailableTopics();
@@ -64,7 +77,7 @@ public class MenuController {
         topicsSelectedListView.setItems(selectedTopicsObservable);
         topicsSelectedListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         
-        // NUEVO: Doble clic para remover tema
+        // Doble clic para remover tema
         topicsSelectedListView.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 String selectedTopic = topicsSelectedListView.getSelectionModel().getSelectedItem();
@@ -72,7 +85,7 @@ public class MenuController {
                     try {
                         removeSingleTopic(selectedTopic);
                     } catch (QuizLoadException ex) {
-                        Logger.getLogger(MenuController.class.getName()).log(Level.SEVERE, null, ex);
+                        LOGGER.log(Level.SEVERE, "Error al remover tema: " + ex.getMessage(), ex);
                     }
                 }
             }
@@ -84,17 +97,16 @@ public class MenuController {
             try {
                 addTopics();
             } catch (QuizLoadException ex) {
-                Logger.getLogger(MenuController.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, "Error al agregar temas: " + ex.getMessage(), ex);
             }
         });
         
-        // Si existe el botón remover, configurarlo
         if (removerTema != null) {
             removerTema.setOnAction(event -> {
                 try {
                     removeSelectedTopics();
                 } catch (QuizLoadException ex) {
-                    Logger.getLogger(MenuController.class.getName()).log(Level.SEVERE, null, ex);
+                    LOGGER.log(Level.SEVERE, "Error al remover temas: " + ex.getMessage(), ex);
                 }
             });
         }
@@ -106,7 +118,22 @@ public class MenuController {
     }
     
     /**
-     * Agrega los temas seleccionados a la lista SIN ALERT MOLESTO
+     * Aplica clip para esquinas redondeadas.
+     */
+    private void applyRoundedCorners() {
+        if (rootPane != null) {
+            Rectangle clip = new Rectangle();
+            clip.setArcWidth(32);
+            clip.setArcHeight(32);
+            clip.widthProperty().bind(rootPane.widthProperty());
+            clip.heightProperty().bind(rootPane.heightProperty());
+            rootPane.setClip(clip);
+            LOGGER.info("Esquinas redondeadas aplicadas al menú");
+        }
+    }
+    
+    /**
+     * Agrega los temas seleccionados a la lista.
      */
     private void addTopics() throws QuizLoadException {
         List<String> selectedTopics = topicsListView.getSelectionModel().getSelectedItems();
@@ -119,30 +146,23 @@ public class MenuController {
         int temasAgregados = 0;
         List<String> duplicados = new ArrayList<>();
         
-        // Procesar cada tema seleccionado
         for (String topicName : selectedTopics) {
-            // PREVENIR DUPLICADOS: Verificar si ya existe
             if (selectedTopicNames.contains(topicName)) {
                 duplicados.add(topicName);
                 continue;
             }
             
-            // Cargar el QuizData del tema
             List<QuizData> topicData = topicService.loadTopics(List.of(topicName));
             
             if (!topicData.isEmpty()) {
                 selectedQuizData.addAll(topicData);
                 selectedTopicNames.add(topicName);
                 selectedTopicsObservable.add(topicName);
-                
-                // NUEVO: Remover de la lista de disponibles
                 topicsListView.getItems().remove(topicName);
-                
                 temasAgregados++;
             }
         }
         
-        // Log de la operación
         if (temasAgregados > 0) {
             LOGGER.info("Temas agregados: " + temasAgregados);
         }
@@ -152,30 +172,24 @@ public class MenuController {
             showWarning("Ya habías agregado: " + String.join(", ", duplicados));
         }
         
-        // Actualizar contador
         updateCountLabel();
-        
-        // Limpiar selección del ListView de disponibles
         topicsListView.getSelectionModel().clearSelection();
     }
     
     /**
-     * Remueve un solo tema (usado por doble clic)
+     * Remueve un solo tema (doble clic).
      */
     private void removeSingleTopic(String topicName) throws QuizLoadException {
         if (topicName == null || !selectedTopicNames.contains(topicName)) {
             return;
         }
         
-        // Remover del Set y ListView
         selectedTopicNames.remove(topicName);
         selectedTopicsObservable.remove(topicName);
         
-        // NUEVO: Devolver a la lista de disponibles (en orden alfabético)
         topicsListView.getItems().add(topicName);
         topicsListView.getItems().sort(String::compareTo);
         
-        // Reconstruir selectedQuizData
         selectedQuizData.clear();
         if (!selectedTopicNames.isEmpty()) {
             List<String> remainingTopics = new ArrayList<>(selectedTopicNames);
@@ -187,7 +201,7 @@ public class MenuController {
     }
     
     /**
-     * Remueve los temas seleccionados de la lista
+     * Remueve los temas seleccionados.
      */
     private void removeSelectedTopics() throws QuizLoadException {
         List<String> toRemove = topicsSelectedListView.getSelectionModel().getSelectedItems();
@@ -197,24 +211,16 @@ public class MenuController {
             return;
         }
         
-        // Crear copia para evitar ConcurrentModificationException
         List<String> toRemoveCopy = new ArrayList<>(toRemove);
         
         for (String topicName : toRemoveCopy) {
-            // Remover del Set de nombres
             selectedTopicNames.remove(topicName);
-            
-            // Remover del ListView
             selectedTopicsObservable.remove(topicName);
-            
-            // NUEVO: Devolver a la lista de disponibles
             topicsListView.getItems().add(topicName);
         }
         
-        // Ordenar alfabéticamente la lista de disponibles
         topicsListView.getItems().sort(String::compareTo);
         
-        // RECONSTRUIR selectedQuizData desde cero con los temas restantes
         selectedQuizData.clear();
         if (!selectedTopicNames.isEmpty()) {
             List<String> remainingTopics = new ArrayList<>(selectedTopicNames);
@@ -223,13 +229,11 @@ public class MenuController {
         
         LOGGER.info("Temas removidos: " + toRemoveCopy.size());
         updateCountLabel();
-        
-        // Limpiar selección
         topicsSelectedListView.getSelectionModel().clearSelection();
     }
     
     /**
-     * Actualiza el label contador de temas
+     * Actualiza el contador de temas.
      */
     private void updateCountLabel() {
         if (temasCountLabel != null) {
@@ -238,7 +242,7 @@ public class MenuController {
     }
     
     /**
-     * Inicia el quiz con los temas seleccionados
+     * Inicia el quiz.
      */
     private void startQuiz() {
         if (selectedQuizData.isEmpty()) {
@@ -252,18 +256,22 @@ public class MenuController {
             );
             Scene scene = new Scene(loader.load());
             
+            // Cargar CSS
+            String cssPath = JavaQuiz.class.getResource("/org/openjfx/javaquiz/css/JavaQuiz.css").toExternalForm();
+            scene.getStylesheets().add(cssPath);
+            
             QuizController qc = loader.getController();
             qc.setQuizData(selectedQuizData);
             
             Stage stage = new Stage();
-            stage.setScene(scene);
             stage.initStyle(StageStyle.TRANSPARENT);
             scene.setFill(Color.TRANSPARENT);
+            stage.setScene(scene);
+            stage.setTitle("JavaQuiz - Quiz en progreso");
             stage.show();
             
             LOGGER.info("Quiz iniciado con " + selectedTopicNames.size() + " tema(s)");
             
-            // Cerrar ventana actual
             Stage current = (Stage) iniciarBtn.getScene().getWindow();
             current.close();
             
@@ -274,18 +282,18 @@ public class MenuController {
     }
     
     /**
-     * Muestra un mensaje de advertencia (SIN bloquear con showAndWait)
+     * Muestra advertencia.
      */
     private void showWarning(String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Advertencia");
         alert.setHeaderText(null);
         alert.setContentText(message);
-        alert.show(); // NO usa showAndWait() - menos molesto
+        alert.show();
     }
     
     /**
-     * Muestra un mensaje de error
+     * Muestra error.
      */
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
