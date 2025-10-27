@@ -6,7 +6,9 @@ import org.openjfx.javaquiz.service.QuizService;
 import org.openjfx.javaquiz.service.TimerService;
 import org.openjfx.javaquiz.util.CodeDisplay;
 import org.openjfx.javaquiz.util.NavigationUtil;
+import org.openjfx.javaquiz.util.LoggerUtil;
 import org.openjfx.javaquiz.JavaQuiz;
+import org.openjfx.javaquiz.exception.InvalidQuizDataException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,21 +28,27 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.fxmisc.richtext.CodeArea;
-import org.openjfx.javaquiz.exception.InvalidQuizDataException;
-
 
 /**
- * Controlador para la pantalla del quiz
+ * Controlador para la pantalla del quiz.
+ * Versión refactorizada con diseño profesional usando CSS.
+ * 
  * Responsabilidad: SOLO manejo de UI y eventos
+ * 
+ * @author angel
+ * @version 2.0
+ * @since 2025-01-24
  */
-
-
 public class QuizController {
 
     // ========== COMPONENTES UI ==========
+    @FXML private AnchorPane rootPane;
     @FXML private ScrollPane scrollPaneId;
     @FXML private AnchorPane codePane;
     @FXML private Button terminarBtn;
@@ -54,11 +63,17 @@ public class QuizController {
     private TimerService timerService;
     
     // ========== LOGGER ==========
-    private static final Logger logger = Logger.getLogger(QuizController.class.getName());
+    private static final Logger logger = LoggerUtil.getLogger(QuizController.class);
     
     // ========== DATOS PARA RESULT ==========
     private List<QuizData> selectedQuizData;
     private String currentTopic;
+    
+    // ========== CONSTANTES CSS ==========
+    private static final String CSS_OPTION_CORRECT = "option-correct";
+    private static final String CSS_OPTION_WRONG = "option-wrong";
+    private static final String CSS_OPTION_SELECTED = "option-selected";
+    private static final String CSS_OPTION_BUTTON = "option-button";
 
     // ========== CONSTRUCTOR ==========
     public QuizController() {
@@ -70,12 +85,33 @@ public class QuizController {
             try {
                 handleTimeout();
             } catch (InvalidQuizDataException ex) {
-                Logger.getLogger(QuizController.class.getName()).log(Level.SEVERE, null, ex);
+                logger.log(Level.SEVERE, "Error en timeout: " + ex.getMessage(), ex);
             }
         });
     }
 
     // ========== INICIALIZACIÓN ==========
+    
+    @FXML
+    private void initialize() {
+        logger.info("Inicializando QuizController");
+        applyRoundedCorners();
+    }
+    
+    /**
+     * Aplica clip para esquinas redondeadas.
+     */
+    private void applyRoundedCorners() {
+        if (rootPane != null) {
+            Rectangle clip = new Rectangle();
+            clip.setArcWidth(32);
+            clip.setArcHeight(32);
+            clip.widthProperty().bind(rootPane.widthProperty());
+            clip.heightProperty().bind(rootPane.heightProperty());
+            rootPane.setClip(clip);
+            logger.info("Esquinas redondeadas aplicadas al quiz");
+        }
+    }
     
     /**
      * Inicializa con un solo QuizData
@@ -106,6 +142,7 @@ public class QuizController {
         setupTimerBindings();
         updateUI();
         timerService.start();
+        logger.info("Quiz iniciado correctamente");
     }
 
     /**
@@ -114,14 +151,28 @@ public class QuizController {
     private void setupTimerBindings() {
         // Binding automático: cuando cambie el tiempo, actualiza el label
         timerService.timeSecondsProperty().addListener((obs, oldVal, newVal) -> {
-            timerLabel.setText("Tiempo: " + newVal);
+            timerLabel.setText("⏱ Tiempo: " + newVal);
         });
         
         // Binding automático: cuando cambie el progreso, actualiza la barra
         timerService.progressProperty().addListener((obs, oldVal, newVal) -> {
             timeBar.setProgress(newVal.doubleValue());
-            timeBar.setStyle(timerService.getProgressColor());
+            // Color dinámico según el tiempo restante
+            updateTimerColor(newVal.doubleValue());
         });
+    }
+    
+    /**
+     * Actualiza el color del timer según el progreso.
+     */
+    private void updateTimerColor(double progress) {
+        if (progress > 0.5) {
+            timeBar.setStyle("-fx-accent: #5B4FFF;"); // Azul
+        } else if (progress > 0.25) {
+            timeBar.setStyle("-fx-accent: #F59E0B;"); // Naranja
+        } else {
+            timeBar.setStyle("-fx-accent: #EF4444;"); // Rojo
+        }
     }
 
     // ========== EVENTOS DE RESPUESTA ==========
@@ -130,42 +181,61 @@ public class QuizController {
     private void optionClicked(ActionEvent event) {
         // Si ya fue respondida, ignorar
         if (quizService.isCurrentQuestionAnswered()) {
+            logger.warning("Pregunta ya respondida, ignorando clic");
             return;
         }
         
         Button clicked = (Button) event.getSource();
         String selectedAnswer = clicked.getText();
         
+        logger.info("Opción seleccionada: " + selectedAnswer);
+        
         // Validar respuesta
         boolean isCorrect = quizService.checkAnswer(selectedAnswer);
         quizService.registerAnswer(isCorrect);
         
-        // Aplicar estilos
-        if (isCorrect) {
-            clicked.setStyle("-fx-background-color: green;");
-        } else {
-            clicked.setStyle("-fx-background-color: red;");
+        // Aplicar estilos CSS según resultado
+        applyAnswerStyle(clicked, isCorrect);
+        
+        if (!isCorrect) {
             highlightCorrectAnswer();
         }
         
-        // Pausa y continuar
-        PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
+        // Pausa antes de continuar
+        PauseTransition pause = new PauseTransition(Duration.seconds(1.0));
         pause.setOnFinished(e -> {
             quizService.goNext();
             
-            //Verifícar si termino después de avanzar
             if (quizService.isFinished()) {
+                logger.info("Quiz terminado, mostrando resultados");
                 showResult();
             } else {
                 try {
                     updateUI();
+                    timerService.restart();
                 } catch (InvalidQuizDataException ex) {
-                    Logger.getLogger(QuizController.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.log(Level.SEVERE, "Error al actualizar UI: " + ex.getMessage(), ex);
                 }
-                timerService.restart();
             }
         });
         pause.play();
+    }
+    
+    /**
+     * Aplica el estilo visual a la opción según si es correcta o incorrecta.
+     */
+    private void applyAnswerStyle(Button button, boolean isCorrect) {
+        // Limpiar clases anteriores
+        button.getStyleClass().removeAll(CSS_OPTION_BUTTON, CSS_OPTION_SELECTED);
+        
+        // Agregar clase según resultado
+        if (isCorrect) {
+            button.getStyleClass().add(CSS_OPTION_CORRECT);
+            logger.info("Respuesta correcta aplicada");
+        } else {
+            button.getStyleClass().add(CSS_OPTION_WRONG);
+            logger.info("Respuesta incorrecta aplicada");
+        }
     }
 
     /**
@@ -176,75 +246,93 @@ public class QuizController {
         if (q == null) return;
         
         String correctAnswer = q.getA();
-        if (opt1.getText().equals(correctAnswer)) opt1.setStyle("-fx-background-color: green;");
-        if (opt2.getText().equals(correctAnswer)) opt2.setStyle("-fx-background-color: green;");
-        if (opt3.getText().equals(correctAnswer)) opt3.setStyle("-fx-background-color: green;");
-        if (opt4.getText().equals(correctAnswer)) opt4.setStyle("-fx-background-color: green;");
+        Button[] options = {opt1, opt2, opt3, opt4};
+        
+        for (Button option : options) {
+            if (option.getText().equals(correctAnswer)) {
+                option.getStyleClass().removeAll(CSS_OPTION_BUTTON);
+                option.getStyleClass().add(CSS_OPTION_CORRECT);
+                logger.info("Respuesta correcta resaltada: " + correctAnswer);
+                break;
+            }
+        }
     }
 
     /**
      * Maneja cuando se acaba el tiempo
      */
     private void handleTimeout() throws InvalidQuizDataException {
-        //VALIDACIÓN: Si ya terminó, no hacer nada
-        if(quizService.isFinished()){
+        if (quizService.isFinished()) {
             return;
         }
+        
+        logger.warning("Tiempo agotado para la pregunta actual");
+        
         // Registrar timeout (cuenta como respuesta incorrecta)
         quizService.registerTimeout();
-        // Avanzar a siguiente pregunta
-        quizService.goNext();
         
-        if (quizService.isFinished()) {
-            showResult();
-        } else {
-            updateUI();
-            timerService.restart();
-        }
+        // Resaltar la respuesta correcta antes de avanzar
+        highlightCorrectAnswer();
+        
+        // Pausa breve para mostrar la respuesta correcta
+        PauseTransition pause = new PauseTransition(Duration.seconds(1.0));
+        pause.setOnFinished(e -> {
+            quizService.goNext();
+            
+            if (quizService.isFinished()) {
+                showResult();
+            } else {
+                try {
+                    updateUI();
+                    timerService.restart();
+                } catch (InvalidQuizDataException ex) {
+                    logger.log(Level.SEVERE, "Error al actualizar UI después de timeout", ex);
+                }
+            }
+        });
+        pause.play();
     }
 
     // ========== NAVEGACIÓN ==========
     
     @FXML
     private void goNextQuestion() {
-        logger.info("Attempting to go to next question. Current index: " + quizService.getCurrentIndex());
-        // VALIDACIÓN: Si estamos en la última pregunta, no avanzar más
+        logger.info("Avanzando a siguiente pregunta. Índice actual: " + quizService.getCurrentIndex());
+        
         if (quizService.getCurrentIndex() >= quizService.getTotalQuestions() - 1) {
-            logger.warning("No more questions available.");
+            logger.warning("No hay más preguntas disponibles");
             return;
         }
         
-        // VALIDACION: No permitir avanzar si ya terminó
         if (quizService.isFinished()) {
-            logger.info("Quiz already finished, showing results.");
+            logger.info("Quiz terminado, mostrando resultados");
             showResult();
             return;
         }
         
         try {
-        quizService.goNext();
-        logger.info("Moved to next question. New index: " + quizService.getCurrentIndex());
-        
-        if (quizService.isFinished()) {
-            logger.info("Quiz finished, showing results.");
-            showResult();
-        } else {
-            updateUI();
-            timerService.restart();
-            logger.info("UI updated, timer restarted.");
+            quizService.goNext();
+            logger.info("Nueva pregunta. Índice: " + quizService.getCurrentIndex());
+            
+            if (quizService.isFinished()) {
+                showResult();
+            } else {
+                updateUI();
+                timerService.restart();
+            }
+        } catch (Exception e) {
+            logger.severe("Error al avanzar a siguiente pregunta: " + e.getMessage());
         }
-    } catch (Exception e) {
-        logger.severe("Error advancing to next question: " + e.getMessage());
-        // TODO: Mostrar mensaje de error en UI
-    }
     }
 
     @FXML
     private void goPreviousQuestion() throws InvalidQuizDataException {
-        // VALIDACIÓN no retroceder si estamos en la primera pregunta
-        if (quizService.getCurrentIndex() == 0){
+        if (quizService.getCurrentIndex() == 0) {
+            logger.warning("Ya estamos en la primera pregunta");
             return;
         }
+        
+        logger.info("Retrocediendo a pregunta anterior");
         quizService.goPrevious();
         updateUI();
         timerService.restart();
@@ -252,21 +340,25 @@ public class QuizController {
 
     @FXML
     private void finishQuiz(ActionEvent event) {
+        logger.info("Finalizando quiz manualmente");
+        timerService.stop();
         showResult();
     }
 
     @FXML
     private void goToMenu(ActionEvent event) {
         try {
+            logger.info("Regresando al menú");
             timerService.stop();
             NavigationUtil.loadSceneTransparent("/org/openjfx/javaquiz/fxml/menu.fxml", menuBtn);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.severe("Error al cargar el menú: " + ex.getMessage());
         }
     }
 
     @FXML
     private void closeApp() {
+        logger.info("Cerrando aplicación");
         timerService.stop();
         NavigationUtil.closeWindow(closeBtn);
     }
@@ -275,6 +367,7 @@ public class QuizController {
     
     @FXML
     private void shuffleQuestions() throws InvalidQuizDataException {
+        logger.info("Mezclando preguntas");
         quizService.shuffle();
         updateUI();
         timerService.restart();
@@ -289,7 +382,9 @@ public class QuizController {
         
         if (scrollPaneId.isVisible()) {
             scrollPaneId.setVisible(false);
-            codeBtn.setText("Mostrar Código");
+            scrollPaneId.setManaged(false);
+            codeBtn.setText("Ver Código");
+            logger.info("Código ocultado");
         } else {
             CodeArea codeArea = CodeDisplay.createCodeArea(q.getCode());
             codePane.getChildren().clear();
@@ -302,8 +397,9 @@ public class QuizController {
             
             scrollPaneId.setVvalue(0.0);
             scrollPaneId.setVisible(true);
-            scrollPaneId.toFront();
+            scrollPaneId.setManaged(true);
             codeBtn.setText("Ocultar Código");
+            logger.info("Código mostrado");
         }
     }
 
@@ -313,21 +409,22 @@ public class QuizController {
      * Actualiza toda la interfaz con la pregunta actual
      */
     private void updateUI() throws InvalidQuizDataException {
-        logger.info("Updating UI for question index: " + quizService.getCurrentIndex());
+        logger.info("Actualizando UI para pregunta índice: " + quizService.getCurrentIndex());
+        
         Question q = quizService.getCurrentQuestion();
-        if (q == null){
-            logger.warning("No current question available.");
+        if (q == null) {
+            logger.warning("No hay pregunta actual disponible");
             return;
         }
         
-        if(q.getX() == null || q.getA() == null){
-            logger.severe("Invalid question data: options or answer is null");
-            throw new InvalidQuizDataException("Current question ", "Missing options or answer");
+        if (q.getX() == null || q.getA() == null) {
+            logger.severe("Datos de pregunta inválidos: opciones o respuesta nula");
+            throw new InvalidQuizDataException("Pregunta actual", "Faltan opciones o respuesta");
         }
         
         // Actualizar pregunta
-        question.setText(q.getQ() + " [" + q.getTopic() + "]");
-        position.setText(String.valueOf(q.getPosition()));
+        question.setText(q.getQ());
+        position.setText(q.getPosition() + ".");
         
         // Mezclar y mostrar opciones
         List<String> options = new ArrayList<>(q.getX());
@@ -339,36 +436,43 @@ public class QuizController {
         opt3.setText(options.get(2));
         opt4.setText(options.get(3));
         
-        // habilitar los botones de manera explicita
-        opt1.setDisable(false);
-        opt2.setDisable(false);
-        opt3.setDisable(false);
-        opt4.setDisable(false);
-        
-        // Resetear estilos
+        // Resetear estilos y habilitar botones
         resetButtonStyles();
         
         // Mostrar/ocultar botón de código
-        codeBtn.setVisible(q.getCode() != null && !q.getCode().isEmpty());
+        boolean hasCode = q.getCode() != null && !q.getCode().isEmpty();
+        codeBtn.setVisible(hasCode);
+        
         if (scrollPaneId != null) {
             scrollPaneId.setVisible(false);
+            scrollPaneId.setManaged(false);
         }
+        
+        logger.info("UI actualizada correctamente");
     }
 
     /**
-     * Resetea los estilos de los botones
+     * Resetea los estilos de los botones a su estado inicial
      */
     private void resetButtonStyles() {
-        String defaultStyle = "-fx-background-color: dodgerblue;";
-        opt1.setStyle(defaultStyle);
-        opt2.setStyle(defaultStyle);
-        opt3.setStyle(defaultStyle);
-        opt4.setStyle(defaultStyle);
-                // habilitar los botones de manera explicita
-        opt1.setDisable(false);
-        opt2.setDisable(false);
-        opt3.setDisable(false);
-        opt4.setDisable(false);
+        Button[] options = {opt1, opt2, opt3, opt4};
+        
+        for (Button option : options) {
+            // Limpiar todas las clases de estado
+            option.getStyleClass().removeAll(
+                CSS_OPTION_CORRECT, 
+                CSS_OPTION_WRONG, 
+                CSS_OPTION_SELECTED
+            );
+            
+            // Asegurar que tiene la clase base
+            if (!option.getStyleClass().contains(CSS_OPTION_BUTTON)) {
+                option.getStyleClass().add(CSS_OPTION_BUTTON);
+            }
+            
+            // Habilitar botón
+            option.setDisable(false);
+        }
     }
 
     // ========== MOSTRAR RESULTADO ==========
@@ -377,8 +481,10 @@ public class QuizController {
         timerService.stop();
         
         try {
-            String fxmlPath = "/org/openjfx/javaquiz/fxml/";
-            FXMLLoader loader = new FXMLLoader(JavaQuiz.class.getResource(fxmlPath + "result.fxml"));
+            logger.info("Cargando pantalla de resultados");
+            
+            String fxmlPath = "/org/openjfx/javaquiz/fxml/result.fxml";
+            FXMLLoader loader = new FXMLLoader(JavaQuiz.class.getResource(fxmlPath));
             Parent root = loader.load();
 
             ResultController rc = loader.getController();
@@ -391,19 +497,32 @@ public class QuizController {
             );
             rc.setStats(quizService.getStatsByTopic());
 
+            Scene scene = new Scene(root);
+            
+            // Cargar CSS
+            String cssPath = JavaQuiz.class.getResource("/org/openjfx/javaquiz/css/JavaQuiz.css").toExternalForm();
+            scene.getStylesheets().add(cssPath);
+            
             Stage stage = new Stage();
-            stage.setScene(new Scene(root));
+            stage.initStyle(StageStyle.TRANSPARENT);
+            scene.setFill(Color.TRANSPARENT);
+            stage.setScene(scene);
+            stage.setTitle("JavaQuiz - Resultados");
             stage.show();
 
             // Cerrar ventana del quiz
             Stage current = (Stage) question.getScene().getWindow();
             current.close();
+            
+            logger.info("Resultados mostrados correctamente");
+            
         } catch (IOException e) {
+            logger.severe("Error al mostrar resultados: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    // ========== GETTERS ==========
+    // ========== GETTERS Y SETTERS ==========
     
     public void setCurrentTopic(String currentTopic) {
         this.currentTopic = currentTopic;

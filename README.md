@@ -100,6 +100,7 @@ JavaQuiz/
 | RichTextFX | 0.11+ | Syntax highlighting |
 | SLF4J | 2.0+ | Logging |
 
+
 ---
 
 ## 🚀 Instalación

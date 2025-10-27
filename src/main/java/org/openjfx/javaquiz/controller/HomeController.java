@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.openjfx.javaquiz.JavaQuiz;
 import org.openjfx.javaquiz.util.LoggerUtil;
+import org.openjfx.javaquiz.util.AnimationUtil;
 
 import java.util.logging.Logger;
 
@@ -46,6 +47,9 @@ public class HomeController {
         
         // Aplicar estilo del botón (ahora desde CSS, no inline)
         applyButtonStyle();
+        
+        // Animación de entrada
+        AnimationUtil.fadeInWithScale(rootPane);
         
         // Configurar acción del botón
         playquizbtn.setOnAction(this::handlePlayButton);
@@ -94,39 +98,51 @@ public class HomeController {
     private void handlePlayButton(ActionEvent event) {
         LOGGER.info("Botón PLAY presionado, navegando al menú");
         
+        // Efecto visual al hacer clic
+        AnimationUtil.popEffect(playquizbtn);
+        
         try {
-            // Cerrar ventana actual
-            Stage currentStage = (Stage) playquizbtn.getScene().getWindow();
-            currentStage.close();
-            LOGGER.info("Ventana Home cerrada");
-            
-            // Cargar el menú
-            String fxmlPath = "/org/openjfx/javaquiz/fxml/menu.fxml";
-            FXMLLoader fxmlLoader = new FXMLLoader(JavaQuiz.class.getResource(fxmlPath));
-            
-            if (fxmlLoader.getLocation() == null) {
-                throw new IllegalArgumentException("No se encontró el archivo FXML: " + fxmlPath);
-            }
-            
-            Scene scene = new Scene(fxmlLoader.load());
-            
-            // Cargar CSS
-            String cssPath = JavaQuiz.class.getResource("/org/openjfx/javaquiz/css/JavaQuiz.css").toExternalForm();
-            scene.getStylesheets().add(cssPath);
-            LOGGER.info("CSS cargado en la escena del menú");
-            
-            // Crear nueva ventana con estilo transparente
-            Stage stage = new Stage();
-            stage.initStyle(StageStyle.TRANSPARENT);
-            scene.setFill(Color.TRANSPARENT);
-            stage.setScene(scene);
-            stage.setTitle("JavaQuiz - Menú");
-            stage.show();
-            
-            LOGGER.info("Ventana del menú mostrada correctamente");
+            // Fade out antes de cerrar
+            AnimationUtil.fadeOutWithCallback(rootPane, () -> {
+                try {
+                    // Cerrar ventana actual
+                    Stage currentStage = (Stage) playquizbtn.getScene().getWindow();
+                    currentStage.close();
+                    LOGGER.info("Ventana Home cerrada");
+                    
+                    // Cargar el menú
+                    String fxmlPath = "/org/openjfx/javaquiz/fxml/menu.fxml";
+                    FXMLLoader fxmlLoader = new FXMLLoader(JavaQuiz.class.getResource(fxmlPath));
+                    
+                    if (fxmlLoader.getLocation() == null) {
+                        throw new IllegalArgumentException("No se encontró el archivo FXML: " + fxmlPath);
+                    }
+                    
+                    Scene scene = new Scene(fxmlLoader.load());
+                    
+                    // Cargar CSS
+                    String cssPath = JavaQuiz.class.getResource("/org/openjfx/javaquiz/css/JavaQuiz.css").toExternalForm();
+                    scene.getStylesheets().add(cssPath);
+                    LOGGER.info("CSS cargado en la escena del menú");
+                    
+                    // Crear nueva ventana con estilo transparente
+                    Stage stage = new Stage();
+                    stage.initStyle(StageStyle.TRANSPARENT);
+                    scene.setFill(Color.TRANSPARENT);
+                    stage.setScene(scene);
+                    stage.setTitle("JavaQuiz - Menú");
+                    stage.show();
+                    
+                    LOGGER.info("Ventana del menú mostrada correctamente");
+                    
+                } catch (Exception e) {
+                    LOGGER.severe("Error al navegar al menú: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            });
             
         } catch (Exception e) {
-            LOGGER.severe("Error al navegar al menú: " + e.getMessage());
+            LOGGER.severe("Error al iniciar animación: " + e.getMessage());
             e.printStackTrace();
         }
     }
