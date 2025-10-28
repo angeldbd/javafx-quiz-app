@@ -7,6 +7,7 @@ import org.openjfx.javaquiz.service.TimerService;
 import org.openjfx.javaquiz.util.CodeDisplay;
 import org.openjfx.javaquiz.util.NavigationUtil;
 import org.openjfx.javaquiz.util.LoggerUtil;
+import org.openjfx.javaquiz.util.WindowDraggableUtil;
 import org.openjfx.javaquiz.JavaQuiz;
 import org.openjfx.javaquiz.exception.InvalidQuizDataException;
 

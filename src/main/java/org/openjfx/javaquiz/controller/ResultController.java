@@ -4,6 +4,7 @@ import org.openjfx.javaquiz.model.TopicStats;
 import org.openjfx.javaquiz.model.QuizData;
 import org.openjfx.javaquiz.service.ResultService;
 import org.openjfx.javaquiz.util.LoggerUtil;
+import org.openjfx.javaquiz.util.WindowDraggableUtil;
 import org.openjfx.javaquiz.JavaQuiz;
 import org.openjfx.javaquiz.exception.InvalidQuizDataException;
 

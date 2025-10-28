@@ -13,6 +13,7 @@ import javafx.stage.StageStyle;
 import org.openjfx.javaquiz.JavaQuiz;
 import org.openjfx.javaquiz.util.LoggerUtil;
 import org.openjfx.javaquiz.util.AnimationUtil;
+import org.openjfx.javaquiz.util.WindowDraggableUtil;
 
 import java.util.logging.Logger;
 

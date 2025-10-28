@@ -5,6 +5,7 @@ import org.openjfx.javaquiz.service.TopicService;
 import org.openjfx.javaquiz.exception.QuizLoadException;
 import org.openjfx.javaquiz.JavaQuiz;
 import org.openjfx.javaquiz.util.LoggerUtil;
+import org.openjfx.javaquiz.util.WindowDraggableUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;

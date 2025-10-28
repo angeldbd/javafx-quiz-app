@@ -25,6 +25,14 @@
             fx:controller="org.openjfx.javaquiz.controller.ResultController">
    
    <children>
+      <!-- Botón X para cerrar (esquina superior derecha) -->
+      <Button fx:id="closeBtn" 
+              text="✕" 
+              styleClass="btn-close"
+              AnchorPane.topAnchor="8.0" 
+              AnchorPane.rightAnchor="8.0"
+              mnemonicParsing="false"/>
+      
       <!-- Contenedor principal -->
       <VBox spacing="24" AnchorPane.topAnchor="32" AnchorPane.bottomAnchor="32" 
             AnchorPane.leftAnchor="32" AnchorPane.rightAnchor="32">

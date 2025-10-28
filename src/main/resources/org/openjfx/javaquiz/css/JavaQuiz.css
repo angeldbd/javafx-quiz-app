@@ -190,6 +190,30 @@
 
 /* ==================== BOTONES DE NAVEGACIÓN ==================== */
 
+/* Botón de cerrar (X) */
+.btn-close {
+    -fx-background-color: transparent;
+    -fx-text-fill: #94A3B8;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-cursor: hand;
+    -fx-padding: 8px;
+}
+
+.btn-close:hover {
+    -fx-background-color: #FEE2E2;
+    -fx-text-fill: #EF4444;
+}
+
+.btn-close:pressed {
+    -fx-background-color: #EF4444;
+    -fx-text-fill: white;
+}
+
 .btn-nav {
     -fx-background-color: #F8FAFC;
     -fx-text-fill: #475569;
