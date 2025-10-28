@@ -96,10 +96,10 @@ JavaQuiz/
 | JavaFX | 21 | Framework de UI |
 | Maven | 3.8+ | Gestión de dependencias |
 | JUnit 5 | 5.10+ | Testing unitario |
+| Mockito | 5.7.0+ | Mocking para tests |
 | Jackson | 2.15+ | Parsing de JSON |
 | RichTextFX | 0.11+ | Syntax highlighting |
 | SLF4J | 2.0+ | Logging |
-
 
 ---
 
