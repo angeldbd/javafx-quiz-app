@@ -634,7 +634,7 @@ SOFTWARE.
 Para preguntas o sugerencias:
 - **GitHub**: [@angeldbd](https://github.com/angeldbd)
 - **Issues**: [Crear Issue](https://github.com/angeldbd/javaquiz/issues)
-- **Email**: angel_latinp@hotmail.com
+- **Email**: angellatincontact@gmail.com
 
 ---
 
