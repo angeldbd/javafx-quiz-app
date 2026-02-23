@@ -648,8 +648,6 @@ Para preguntas o sugerencias:
 
 <div align="center">
 
-**⭐ Si te gustó el proyecto, dale una estrella en GitHub ⭐**
-
                                                                         Made with ❤️ 
 
 ![GitHub stars](https://img.shields.io/github/stars/angeldbd/javaquiz?style=social)
