@@ -650,7 +650,7 @@ Para preguntas o sugerencias:
 
 **⭐ Si te gustó el proyecto, dale una estrella en GitHub ⭐**
 
-                                Made with ❤️ 
+                                                        Made with ❤️ 
 
 ![GitHub stars](https://img.shields.io/github/stars/angeldbd/javaquiz?style=social)
 ![GitHub forks](https://img.shields.io/github/forks/angeldbd/javaquiz?style=social)
